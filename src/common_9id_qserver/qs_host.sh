@@ -5,7 +5,7 @@
 
 SHELL_SCRIPT_NAME=${BASH_SOURCE:-${0}}
 SCRIPT_DIR="$(dirname $(readlink -f  "${SHELL_SCRIPT_NAME}"))"
-CONFIGS_DIR=$(readlink -f "${SCRIPT_DIR}/../common/configs")
+CONFIGS_DIR=$(readlink -f "${SCRIPT_DIR}/../common_9id/configs")
 
 ###-----------------------------
 ### Change program defaults here
