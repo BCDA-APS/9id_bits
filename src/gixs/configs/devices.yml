@@ -30,22 +30,22 @@ apstools.devices.SimulatedApsPssShutterWithStatus:
 #   labels: ["scalers", "detectors"]
 
 ophyd.EpicsMotor:
-- {name: "th-actuator", prefix: 9idd:CR9D4M1:m1, labels: ["motor"]}
-- {name: "chi-actuator", prefix: 9idd:CR9D4M1:m2, labels: ["motor"]}
+- {name: "th-actuator", prefix: "9idd:CR9D4M1:m1", labels: ["motor"]}
+- {name: "chi-actuator", prefix: "9idd:CR9D4M1:m2", labels: ["motor"]}
 - {name: "sam_x", prefix: 9idd:CR9D4M1:m3, labels: ["motor"]}
-#- {name: "", prefix: 9idd:CR9D4M1:m4, labels: ["motor"]}
-- {name: "sam_y", prefix: 9idd:CR9D4M1:m5, labels: ["motor"]}
-#- {name: m2, prefix: 9idd:CR9D4M1:m6, labels: ["motor"]}
-- {name: "sam_z, prefix: 9idd:CR9D4M1:m7, labels: ["motor"]}
-#- {name: m4, prefix: 9idd:CR9D4M1:m8, labels: ["motor"]}
-#- {name: "", prefix: 9idd:CR9D4M1:m9, labels: ["motor"]}
-- {name: "v_phi_f", prefix: 9idd:CR9D4M1:m10, labels: ["motor"]}
-- {name: "v_sam_x", prefix: 9idd:CR9D4M1:m11, labels: ["motor"]}
-- {name: "v_sam_y", prefix: 9idd:CR9D4M1:m12, labels: ["motor"]}
-- {name: "v_phi_c", prefix: 9idd:CR9D4M1:m13, labels: ["motor"]}
-- {name: "b_stop_x", prefix: 9idd:CR9D4M1:m14, labels: ["motor"]}
-- {name: "b_stop_z", prefix: 9idd:CR9D4M1:m15, labels: ["motor"]}
-#- {name: "", prefix: 9idd:CR9D4M1:m16, labels: ["motor"]}
+#- {name: "", prefix: "9idd:CR9D4M1:m4", labels: ["motor"]}
+- {name: "sam_y", prefix: "9idd:CR9D4M1:m5", labels: ["motor"]}
+#- {name: m2, prefix: "9idd:CR9D4M1:m6", labels: ["motor"]}
+- {name: "sam_z, prefix: "9idd:CR9D4M1:m7", labels: ["motor"]}
+#- {name: m4, prefix: "9idd:CR9D4M1:m8", labels: ["motor"]}
+#- {name: "", prefix: "9idd:CR9D4M1:m9", labels: ["motor"]}
+- {name: "v_phi_f", prefix: "9idd:CR9D4M1:m10", labels: ["motor"]}
+- {name: "v_sam_x", prefix: "9idd:CR9D4M1:m11", labels: ["motor"]}
+- {name: "v_sam_y", prefix: "9idd:CR9D4M1:m12", labels: ["motor"]}
+- {name: "v_phi_c", prefix: "9idd:CR9D4M1:m13", labels: ["motor"]}
+- {name: "b_stop_x", prefix: "9idd:CR9D4M1:m14", labels: ["motor"]}
+- {name: "b_stop_z", prefix: "9idd:CR9D4M1:m15", labels: ["motor"]}
+#- {name: "", prefix: "9idd:CR9D4M1:m16", labels: ["motor"]}
 
 # apstools.devices.ad_creator:
 #   - name: adsimdet
