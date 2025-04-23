@@ -43,7 +43,7 @@ ophyd.EpicsMotor:
 - {name: "mr2_piezo",   prefix: "9ida:FMBO:Piezo:m2", labels: ["motor"]}
 - {name: "mr2_bender1", prefix: "9ida:FMBO:m7", labels: ["motor"]}
 - {name: "mr1_bender2", prefix: "9ida:FMBO:m8", labels: ["motor"]}
-# TODO FLAG 1, FLAG 2, FLAG 3, FLAG 4 -- AD + motors
+# FLAG 1, FLAG 2, FLAG 3, FLAG 4 -- motors
 - {name: "flag1_mot", prefix: "9ida:CR9A1:m5", labels: ["motor"]}
 - {name: "flag2_mot", prefix: "9ida:CR9A1:m13", labels: ["motor"]}
 - {name: "flag3_mot", prefix: "9ida:MONO:m3", labels: ["motor"]}
@@ -63,8 +63,6 @@ ophyd.EpicsMotor:
 - {name: "slit4_base_vert", prefix: "9idd:CR9D1M1:m16", labels: ["motor"]}
 - {name: "slit5_base_hor",  prefix: "9idd:CR9D1M1:m21", labels: ["motor"]}
 - {name: "slit5_base_vert", prefix: "9idd:CR9D1M1:m22", labels: ["motor"]}
-# TODO Transfocators (CRL1 [MH] , CRL2 [D]) system motors
-# TODO AVS Filter translation motor
 # Grand Tube motors
 - {name: "carriage_hor_bs_y",   prefix: "9idGT:m1", labels: ["motor"]}
 - {name: "eiger_hor_bs_y",      prefix: "9idGT:m2", labels: ["motor"]}
@@ -121,19 +119,19 @@ common_9id.devices.AVSfilters:
   translation_motor: "9idd:CR9D1M2:m16"
   
 # Transfocator (CRL1, CRL2) optics support
-common_9id.devices.JJtransfocator2x:
+common_9id.devices.JJtransfocator2xZ:
 - name: crl9id2x
   prefix: "9idPyCRL:CRL9ID:"
   labels: ["transfocators"]
-  pitch_motor1: "9idd:TRANS:m4"
-  yaw_motor1: "9idd:TRANS:m3"
-  x_motor1: "9idd:TRANS:m2"
-  y_motor1: "9idd:TRANS:m1"
-  pitch_motor2: "9idd:TRANS:m28"
-  yaw_motor2: "9idd:TRANS:m27"
-  x_motor2: "9idd:TRANS:m26"
-  y_motor2: "9idd:TRANS:m25"
-  z_motor2: "9idd:TRANS:m24"
+  pitch1_motor: "9idd:TRANS:m4"
+  yaw1_motor: "9idd:TRANS:m3"
+  x1_motor: "9idd:TRANS:m2"
+  y1_motor: "9idd:TRANS:m1"
+  pitch2_motor: "9idd:TRANS:m28"
+  yaw2_motor: "9idd:TRANS:m27"
+  x2_motor: "9idd:TRANS:m26"
+  y2_motor: "9idd:TRANS:m25"
+  z2_motor: "9idd:TRANS:m24"
   
 # TODO D-Hutch fast shutter
 

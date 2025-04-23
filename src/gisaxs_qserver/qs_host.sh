@@ -5,7 +5,7 @@
 
 SHELL_SCRIPT_NAME=${BASH_SOURCE:-${0}}
 SCRIPT_DIR="$(dirname $(readlink -f  "${SHELL_SCRIPT_NAME}"))"
-CONFIGS_DIR=$(readlink -f "${SCRIPT_DIR}/../hexa/configs")
+CONFIGS_DIR=$(readlink -f "${SCRIPT_DIR}/../gisaxs/configs")
 
 ###-----------------------------
 ### Change program defaults here
@@ -15,7 +15,8 @@ ICONFIG_YML="${CONFIGS_DIR}"/iconfig.yml
 
 # Bluesky queueserver configuration YAML file.
 # This file contains the definition of 'redis_addr'.  (default: localhost:6379)
-QS_CONFIG_YML="${SCRIPT_DIR}/qs-config.yml"
+# "export" is for BITS to identify when QS is running.
+export QS_CONFIG_YML="${SCRIPT_DIR}/qs-config.yml"
 
 # Host name (from $hostname) where the queueserver host process runs.
 # QS_HOSTNAME=amber.xray.aps.anl.gov  # if a specific host is required
@@ -142,6 +143,7 @@ function exit_if_running() {
 
 function restart() {
     stop
+    sleep 0.1  # empirical, 0.01 is too short, 1.0 is plenty.
     start
 }
 
