@@ -1,15 +1,14 @@
+# Devices common to GIWAXS and GISAXS experiments
+
 # Guarneri-style device YAML configuration
 
 apsbits.utils.sim_creator.predefined_device:
-- {creator: ophyd.sim.motor, name: sim_motor_waxs}
-- {creator: ophyd.sim.noisy_det, name: sim_det_waxs}
+- {creator: ophyd.sim.motor, name: sim_motor_ws}
+- {creator: ophyd.sim.noisy_det, name: sim_det_ws}
 
-# TODO
-# detector pedestal motions
-# 9-id-d beamstop motions
-
-
-# TODO Pilatus 1M 
+# Motors
+# TODO Diffractometer motions
+# TODO Sample stage motions
 
 # apstools.devices.ad_creator:
 #   - name: adsimdet
@@ -26,3 +25,5 @@ apsbits.utils.sim_creator.predefined_device:
 #           write_path_template: "/path/to/ioc/tmp/"
 #       - roi1
 #       - stats1
+
+# TODO Robot support

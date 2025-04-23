@@ -1,15 +1,12 @@
+# Devices common to GIXPCS and GISAXS experiments
+
 # Guarneri-style device YAML configuration
 
 apsbits.utils.sim_creator.predefined_device:
-- {creator: ophyd.sim.motor, name: sim_motor_waxs}
-- {creator: ophyd.sim.noisy_det, name: sim_det_waxs}
+- {creator: ophyd.sim.motor, name: sim_motor_xs}
+- {creator: ophyd.sim.noisy_det, name: sim_det_xs}
 
-# TODO
-# detector pedestal motions
-# 9-id-d beamstop motions
-
-
-# TODO Pilatus 1M 
+# TODO Eiger 16 M detector
 
 # apstools.devices.ad_creator:
 #   - name: adsimdet
