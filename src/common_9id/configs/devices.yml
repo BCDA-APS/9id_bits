@@ -13,9 +13,9 @@ apstools.devices.SimulatedApsPssShutterWithStatus:
 #   value: 50.7
 # - name: t2
 #   value: 2
-
+ 
 # White beam apertures (SL-1, SL-2)
-apstools.devices.HHLSlits:
+common_9id.devices.HHLAperture:
 - name: slit1
   prefix: "9ida:SL-1"
   labels: ["slits"]
@@ -118,7 +118,7 @@ common_9id.devices.AVSfilters:
 - name: fl1
   prefix: "9idPyFilter:FL1:"
   labels: ["filters"]
-#TODO  translation_motor: "9idd:CR9D1M2:m16"
+  translation_motor: "9idd:CR9D1M2:m16"
   
 # Transfocator (CRL1, CRL2) optics support
 common_9id.devices.JJtransfocator2x:
