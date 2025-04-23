@@ -32,7 +32,7 @@ apstools.devices.SimulatedApsPssShutterWithStatus:
 ophyd.EpicsMotor:
 - {name: "th-actuator", prefix: "9idd:CR9D4M1:m1", labels: ["motor"]}
 - {name: "chi-actuator", prefix: "9idd:CR9D4M1:m2", labels: ["motor"]}
-- {name: "sam_x", prefix: 9idd:CR9D4M1:m3, labels: ["motor"]}
+- {name: "sam_x", prefix: "9idd:CR9D4M1:m3", labels: ["motor"]}
 #- {name: "", prefix: "9idd:CR9D4M1:m4", labels: ["motor"]}
 - {name: "sam_y", prefix: "9idd:CR9D4M1:m5", labels: ["motor"]}
 #- {name: m2, prefix: "9idd:CR9D4M1:m6", labels: ["motor"]}
