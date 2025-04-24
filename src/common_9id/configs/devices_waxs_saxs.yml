@@ -7,8 +7,19 @@ apsbits.utils.sim_creator.predefined_device:
 - {creator: ophyd.sim.noisy_det, name: sim_det_ws}
 
 # Motors
-# TODO Diffractometer motions
+ophyd.EpicsMotor:
+# Diffractometer motions
+- {name: "gixs_granite", prefix: "9idd:CR9D1M2:m14", labels: ["motor"]}
+- {name: "gixs_pmth", prefix: "9idd:CR9D4M1:pmth", labels: ["motor"]}
+- {name: "gixs_pmchi", prefix: "9idd:CR9D4M1:pmchi", labels: ["motor"]}
 # TODO Sample stage motions
+- {name: "gixs_sam_x", prefix: "9idd:CR9D4M1:m3", labels: ["motor"]}
+- {name: "gixs_sam_y", prefix: "9idd:CR9D4M1:m5", labels: ["motor"]}
+- {name: "gixs_sam_z", prefix: "9iddVME:m11", labels: ["motor"]}
+- {name: "gixs_v_phi_f", prefix: "9idd:CR9D4M1:m10", labels: ["motor"]}
+- {name: "gixs_v_sam_x", prefix: "9idd:CR9D4M1:m11", labels: ["motor"]}
+- {name: "gixs_v_sam_y", prefix: "9idd:CR9D4M1:m12", labels: ["motor"]}
+- {name: "gixs_v_phi_c", prefix: "9idd:CR9D4M1:m13", labels: ["motor"]}
 
 # apstools.devices.ad_creator:
 #   - name: adsimdet

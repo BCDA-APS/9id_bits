@@ -5,7 +5,14 @@ apsbits.utils.sim_creator.predefined_device:
 - {creator: ophyd.sim.noisy_det, name: sim_det_xpcs}
 
 # Motions
-# TODO Hexapod
+ophyd.EpicsMotor:
+# TODO Hexapod -- may update later as IOC is expanded
+- {name: "hexapod_1_x",     prefix: "9idHexapod:m7", labels: ["motor"]}
+- {name: "hexapod_1_y",     prefix: "9idHexapod:m8", labels: ["motor"]}
+- {name: "hexapod_1_z",     prefix: "9idHexapod:m9", labels: ["motor"]}
+- {name: "hexapod_1_Ax",     prefix: "9idHexapod:m10", labels: ["motor"]}
+- {name: "hexapod_1_Ay",     prefix: "9idHexapod:m11", labels: ["motor"]}
+- {name: "hexapod_1_Az",     prefix: "9idHexapod:m12", labels: ["motor"]}
 # TDOD QNW sample environment
 # TODO Temperature control
 

@@ -61,6 +61,7 @@ DM_SETUP_FILE: "/home/dm/etc/dm.setup.sh"
 DEVICES_FILES:
 - devices.yml
 - devices_common.yml
+- devices_waxs_saxs.yml
 APS_DEVICES_FILES:
 - devices_aps_only.yml
 

@@ -4,12 +4,28 @@ apsbits.utils.sim_creator.predefined_device:
 - {creator: ophyd.sim.motor, name: sim_motor_waxs}
 - {creator: ophyd.sim.noisy_det, name: sim_det_waxs}
 
-# TODO
-# detector pedestal motions
+ophyd.EpicsMotor:
+# TODO detector pedestal motions
 # 9-id-d beamstop motions
+- {name: "b_stop_x", prefix: "9idd:CR9D4M1:m14", labels: ["motor"]}
+- {name: "b_stop_z", prefix: "9idd:CR9D4M1:m15", labels: ["motor"]}
 
-
-# TODO Pilatus 1M 
+# TODO complete/update Pilatus 1M detector
+apstools.devices.ad_creator:
+  - name: pilatus1m
+    prefix: "ad:"
+    labels: ["area_detector", "detectors"]
+    plugins:
+      - cam:
+          class: apstools.devices.SimDetectorCam_V34
+      - image
+      - pva
+      - hdf1:
+          class: apstools.devices.AD_EpicsFileNameHDF5Plugin
+          read_path_template: "/path/to/bluesky/tmp/"
+          write_path_template: "/path/to/ioc/tmp/"
+      - roi1
+      - stats1
 
 # apstools.devices.ad_creator:
 #   - name: adsimdet

@@ -63,34 +63,6 @@ ophyd.EpicsMotor:
 - {name: "slit4_base_vert", prefix: "9idd:CR9D1M1:m16", labels: ["motor"]}
 - {name: "slit5_base_hor",  prefix: "9idd:CR9D1M1:m21", labels: ["motor"]}
 - {name: "slit5_base_vert", prefix: "9idd:CR9D1M1:m22", labels: ["motor"]}
-# Grand Tube motors
-- {name: "carriage_hor_bs_y",   prefix: "9idGT:m1", labels: ["motor"]}
-- {name: "eiger_hor_bs_y",      prefix: "9idGT:m2", labels: ["motor"]}
-- {name: "eiger_vert_bs_x",     prefix: "9idGT:m3", labels: ["motor"]}
-- {name: "mmpad_hor_bs_y",      prefix: "9idGT:m4", labels: ["motor"]}
-- {name: "mmpad_x",             prefix: "9idGT:m5", labels: ["motor"]}
-- {name: "mmpad_y",             prefix: "9idGT:m6", labels: ["motor"]}
-- {name: "eiger_vert_bs_y",     prefix: "9idGT:m7", labels: ["motor"]}
-#- {name: "",                   prefix: "9idGT:m8", labels: ["motor"]}
-- {name: "z_carriage",          prefix: "9idGT:m9", labels: ["motor"]}
-#- {name: "z_enc",              prefix: "9idGT:m10", labels: ["motor"]}
-- {name: "eiger_x",             prefix: "9idGT:m11", labels: ["motor"]}
-- {name: "eiger_y",             prefix: "9idGT:m12", labels: ["motor"]}
-#- {name: "eiger_x_enc",        prefix: "9idGT:m15", labels: ["motor"]}
-#- {name: "eiger_y_enc",        prefix: "9idGT:m16". labels: ["motor"]}
-- {name: "carriage_bs_top",     prefix: "9idGT:mcs2-02:m1", labels: ["motor"]}
-- {name: "carriage_bs_mid",     prefix: "9idGT:mcs2-02:m2", labels: ["motor"]}
-- {name: "carriage_bs_bot",     prefix: "9idGT:mcs2-02:m3", labels: ["motor"]}
-- {name: "eiger_vert_bs_y_ob",  prefix: "9idGT:mcs2-02:m4", labels: ["motor"]}
-- {name: "eiger_vert_bs_y_mid", prefix: "9idGT:mcs2-02:m5", labels: ["motor"]}
-- {name: "eiger_vert_bs_y_ib",  prefix: "9idGT:mcs2-02:m6", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_top",  prefix: "9idGT:mcs2-01:m1", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_top2", prefix: "9idGT:mcs2-01:m2", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_top3", prefix: "9idGT:mcs2-01:m3", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_bot",  prefix: "9idGT:mcs2-01:m4", labels: ["motor"]}
-- {name: "mmpad_hor_bs_x_top",  prefix: "9idGT:mcs2-01:m5", labels: ["motor"]}
-- {name: "mmpad_hor_bs_x_mid",  prefix: "9idGT:mcs2-01:m6", labels: ["motor"]}
-- {name: "mmpad_hor_bs_x_bot",  prefix: "9idGT:mcs2-01:m7", labels: ["motor"]}
 
 
 # JJ X-ray slits + base
@@ -135,20 +107,9 @@ common_9id.devices.JJtransfocator2xZ:
   
 # TODO D-Hutch fast shutter
 
-# hkl.SimulatedE4CV:
-# - name: sim4c
-#   prefix: ""
-#   labels: ["diffractometer"]
-
-# ophyd.scaler.ScalerCH:
-# - name: scaler1
-#   prefix: vme:scaler1
-#   labels: ["scalers", "detectors"]
-
-# TODO AD for FLAG 1, FLAG 2, FLAG 3, FLAG 4 
-
 # TODO XBPM 1/2 (BD3/5) data acquisition
 
+# TODO AD for FLAG 1, FLAG 2, FLAG 3, FLAG 4 
 
 # apstools.devices.ad_creator:
 #   - name: adsimdet
