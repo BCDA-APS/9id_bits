@@ -1,0 +1,50 @@
+# Guarneri-style device YAML configuration
+
+apsbits.utils.sim_creator.predefined_device:
+- {creator: ophyd.sim.motor, name: sim_motor_cssi}
+- {creator: ophyd.sim.noisy_det, name: sim_det_cssi}
+
+ophyd.EpicsMotor:
+- {name: "uscope_x",      prefix: "9ida:FMBO:m2", labels: ["motor", "baseline"]}
+#- {name: "uscope_y",      prefix: "", labels: ["motors", "baseline"]}
+- {name: "uscope_z",      prefix: "9ida:FMBO:m2", labels: ["motor", "baseline"]}
+#- {name: "uscope_focus",  prefix: "", labels: ["motor", "baseline"]}
+
+#           - {label: "Smaract MCS2", file: "motor4x1.ui", macros: "P=9idd:mcs2-01:,M1=m1,M2=m2,M3=m3,M4=m4"}
+#           - {label: "Attocube AMC300", file: "motor2x1.ui", macros: "P=9idd:amc300-01:,M1=m1,M2=m2"}
+#
+#
+#           - {label: "Labjack 1", file: "LabJack_T7_SE", macros: "P=9idd:LJT8:1:" }
+#           - {label: "Labjack 2", file: "LabJack_T7_SE", macros: "P=9idd:LJT8:2:" }
+
+common_9id.devices.FlexCombinedEnc:
+- name: cssi_y2
+  prefix: "9idd:"
+  combined: "CSSI:m51"
+  labels: ["motors", "baseline"]
+  fine: "CSSI:m41"
+  coarse: "CR9D1M2:m3"
+  enc_sensor: "CSSI:enc0"
+- name: cssi_z2
+  prefix: "9idd:"
+  combined: "CSSI:m52"
+  labels: ["motors", "baseline"]
+  fine: "CSSI:m26"
+  coarse: "CR9D1M2:m4"
+  enc_sensor: "CSSI:enc1"
+  
+common_9id.devices.FlexCombinedCap:
+- name: cssi_x2
+  prefix: "9idd:"
+  combined: "CSSI:m53"
+  labels: ["motors", "baseline"]
+  fine: "CSSI:m24"
+  coarse: "CSSI:m44"
+  cap_sensor: "CSSI:cap0"
+- name: cssi_theta3
+  prefix: "9idd:"
+  combined: "CSSI:m54"
+  labels: ["motors", "baseline"]
+  fine: "CSSI:m25"
+  coarse: "CSSI:m32"
+  cap_sensor: "CSSI:cap1"

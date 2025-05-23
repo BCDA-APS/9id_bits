@@ -27,40 +27,41 @@ apstools.devices.ad_creator:
       - roi1
       - stats1
 
-apstools.devices.ad_creator:
-  - name: eiger16m
-    prefix: "9idEiger16m:"
-    labels: ["area_detector", "detectors"]
-    plugins:
-      - cam:
-          class: ophyd.areadetector.PilatusDetectorCam
-      - image
-      - pva
-      - process1
-      - transform1
-      - cc1
-      - cc2
-      - over1
-      - roi1
-      - roi2
-      - roi3
-      - roi4
-      - stats1
-      - stats2
-      - stats3
-      - stats4
-      - stats5
-      - gather1
-      - roistat1
-      - cb1
-      - attr1
-      - fft1
-      - codec1
-      - codec2:
-          class: ophyd.areadetector.plugins.CodecPlugin_V34
-          suffix: "Codec2:"
-      - badpix1
-      - hdf1:
-          class: apstools.devices.AD_EpicsFileNameHDF5Plugin
-          read_path_template: "/path/to/bluesky/tmp/"
-          write_path_template: "/path/to/ioc/tmp/"
+#apstools.devices.ad_creator:
+#  - name: eiger16m
+#    prefix: "9idEiger16m:"
+#    labels: ["area_detector", "detectors"]
+#    plugins:
+#      - cam:
+#          class: ophyd.areadetector.PilatusDetectorCam
+#      - image
+#      - pva
+#      - process1
+#      - transform1
+#      - cc1
+#      - cc2
+#      - over1
+#      - roi1
+#      - roi2
+#      - roi3
+#      - roi4
+#      - stats1
+#      - stats2
+#      - stats3
+#      - stats4
+#      - stats5
+#      - gather1
+#      - roistat1
+#      - cb1
+#      - attr1
+#      - fft1
+#      - codec1
+#      - codec2:
+#          class: ophyd.areadetector.plugins.CodecPlugin_V34
+#          suffix: "Codec2:"
+#      - badpix1
+#      - hdf1:
+#          class: apstools.devices.AD_EpicsFileNameHDF5Plugin
+#          read_path_template: "/path/to/bluesky/tmp/"
+#          write_path_template: "/path/to/ioc/tmp/"
+#

@@ -6,13 +6,13 @@ ICONFIG_VERSION: 2.0.0
 # Add additional configuration for use with your instrument.
 
 ### The short name for the databroker catalog.
-DATABROKER_CATALOG: &databroker_catalog 9idd
+DATABROKER_CATALOG: &databroker_catalog 9idcssi
 
 ### RunEngine configuration
 RUN_ENGINE:
     DEFAULT_METADATA:
         beamline_id: 9id
-        instrument_name: common hardware
+        instrument_name: CSSI
         proposal_id: commissioning
         databroker_catalog: *databroker_catalog
 
@@ -37,7 +37,7 @@ USE_BLUESKY_MAGICS: true
 ### Defaults: all true
 ### except no plots in queueserver
 BEC:
-    BASELINE: false
+    BASELINE: true
     HEADING: true
     PLOTS: false
     TABLE: true
@@ -60,8 +60,13 @@ DM_SETUP_FILE: "/home/dm/etc/dm.setup.sh"
 ### Local OPHYD Device Control Yaml
 DEVICES_FILES:
 - devices.yml
+- devices_common.yml
 APS_DEVICES_FILES:
 - devices_aps_only.yml
+
+# Log when devices are added to console (__main__ namespace)
+MAKE_DEVICES:
+    LOG_LEVEL: info
 
 # ----------------------------------
 

@@ -8,36 +8,35 @@ apsbits.utils.sim_creator.predefined_device:
 
 ophyd.EpicsMotor:
 # Grand Tube motors
-- {name: "carriage_hor_bs_y",   prefix: "9idGT:m1", labels: ["motor"]}
-- {name: "eiger_hor_bs_y",      prefix: "9idGT:m2", labels: ["motor"]}
-- {name: "eiger_vert_bs_x",     prefix: "9idGT:m3", labels: ["motor"]}
-- {name: "mmpad_hor_bs_y",      prefix: "9idGT:m4", labels: ["motor"]}
-- {name: "mmpad_x",             prefix: "9idGT:m5", labels: ["motor"]}
-- {name: "mmpad_y",             prefix: "9idGT:m6", labels: ["motor"]}
-- {name: "eiger_vert_bs_y",     prefix: "9idGT:m7", labels: ["motor"]}
-#- {name: "",                   prefix: "9idGT:m8", labels: ["motor"]}
-- {name: "z_carriage",          prefix: "9idGT:m9", labels: ["motor"]}
-#- {name: "z_enc",              prefix: "9idGT:m10", labels: ["motor"]}
-- {name: "eiger_x",             prefix: "9idGT:m11", labels: ["motor"]}
-- {name: "eiger_y",             prefix: "9idGT:m12", labels: ["motor"]}
-#- {name: "eiger_x_enc",        prefix: "9idGT:m15", labels: ["motor"]}
-#- {name: "eiger_y_enc",        prefix: "9idGT:m16". labels: ["motor"]}
-- {name: "carriage_bs_top",     prefix: "9idGT:mcs2-02:m1", labels: ["motor"]}
-- {name: "carriage_bs_mid",     prefix: "9idGT:mcs2-02:m2", labels: ["motor"]}
-- {name: "carriage_bs_bot",     prefix: "9idGT:mcs2-02:m3", labels: ["motor"]}
-- {name: "eiger_vert_bs_y_ob",  prefix: "9idGT:mcs2-02:m4", labels: ["motor"]}
-- {name: "eiger_vert_bs_y_mid", prefix: "9idGT:mcs2-02:m5", labels: ["motor"]}
-- {name: "eiger_vert_bs_y_ib",  prefix: "9idGT:mcs2-02:m6", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_top",  prefix: "9idGT:mcs2-01:m1", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_top2", prefix: "9idGT:mcs2-01:m2", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_top3", prefix: "9idGT:mcs2-01:m3", labels: ["motor"]}
-- {name: "eiger_hor_bs_x_bot",  prefix: "9idGT:mcs2-01:m4", labels: ["motor"]}
-- {name: "mmpad_hor_bs_x_top",  prefix: "9idGT:mcs2-01:m5", labels: ["motor"]}
-- {name: "mmpad_hor_bs_x_mid",  prefix: "9idGT:mcs2-01:m6", labels: ["motor"]}
-- {name: "mmpad_hor_bs_x_bot",  prefix: "9idGT:mcs2-01:m7", labels: ["motor"]}
+- {name: "carriage_hor_bs_y",   prefix: "9idGT:m1", labels: ["motor", "baseline"]}
+- {name: "eiger_hor_bs_y",      prefix: "9idGT:m2", labels: ["motor", "baseline"]}
+- {name: "eiger_vert_bs_x",     prefix: "9idGT:m3", labels: ["motor", "baseline"]}
+- {name: "mmpad_hor_bs_y",      prefix: "9idGT:m4", labels: ["motor", "baseline"]}
+- {name: "mmpad_x",             prefix: "9idGT:m5", labels: ["motor", "baseline"]}
+- {name: "mmpad_y",             prefix: "9idGT:m6", labels: ["motor", "baseline"]}
+- {name: "eiger_vert_bs_y",     prefix: "9idGT:m7", labels: ["motor", "baseline"]}
+#- {name: "",                   prefix: "9idGT:m8", labels: ["motor", "baseline"]}
+- {name: "z_carriage",          prefix: "9idGT:m9", labels: ["motor", "baseline"]}
+#- {name: "z_enc",              prefix: "9idGT:m10", labels: ["motor", "baseline"]}
+- {name: "eiger_x",             prefix: "9idGT:m11", labels: ["motor", "baseline"]}
+- {name: "eiger_y",             prefix: "9idGT:m12", labels: ["motor", "baseline"]}
+#- {name: "eiger_x_enc",        prefix: "9idGT:m15", labels: ["motor", "baseline"]}
+#- {name: "eiger_y_enc",        prefix: "9idGT:m16". labels: ["motor", "baseline"]}
+- {name: "carriage_bs_top",     prefix: "9idGT:mcs2-02:m1", labels: ["motor", "baseline"]}
+- {name: "carriage_bs_mid",     prefix: "9idGT:mcs2-02:m2", labels: ["motor", "baseline"]}
+- {name: "carriage_bs_bot",     prefix: "9idGT:mcs2-02:m3", labels: ["motor", "baseline"]}
+- {name: "eiger_vert_bs_y_ob",  prefix: "9idGT:mcs2-02:m4", labels: ["motor", "baseline"]}
+- {name: "eiger_vert_bs_y_mid", prefix: "9idGT:mcs2-02:m5", labels: ["motor", "baseline"]}
+- {name: "eiger_vert_bs_y_ib",  prefix: "9idGT:mcs2-02:m6", labels: ["motor", "baseline"]}
+- {name: "eiger_hor_bs_x_top",  prefix: "9idGT:mcs2-01:m1", labels: ["motor", "baseline"]}
+- {name: "eiger_hor_bs_x_top2", prefix: "9idGT:mcs2-01:m2", labels: ["motor", "baseline"]}
+- {name: "eiger_hor_bs_x_top3", prefix: "9idGT:mcs2-01:m3", labels: ["motor", "baseline"]}
+- {name: "eiger_hor_bs_x_bot",  prefix: "9idGT:mcs2-01:m4", labels: ["motor", "baseline"]}
+- {name: "mmpad_hor_bs_x_top",  prefix: "9idGT:mcs2-01:m5", labels: ["motor", "baseline"]}
+- {name: "mmpad_hor_bs_x_mid",  prefix: "9idGT:mcs2-01:m6", labels: ["motor", "baseline"]}
+- {name: "mmpad_hor_bs_x_bot",  prefix: "9idGT:mcs2-01:m7", labels: ["motor", "baseline"]}
 
 
-# TODO complete/update Eiger 16 M detector
 apstools.devices.ad_creator:
   - name: eiger16m
     prefix: "9idEiger16m:"
@@ -51,7 +50,7 @@ apstools.devices.ad_creator:
       - transform1
       - cc1
       - cc2
-      - over1
+      - overlay1
       - roi1
       - roi2
       - roi3
@@ -61,7 +60,39 @@ apstools.devices.ad_creator:
       - stats3
       - stats4
       - stats5
-      - gather1
+      - scatter1
+      - gather1: 
+          class: ophyd.areadetector.plugins.GatherPlugin
+          suffix: "Gather1:"
+      - gather11: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "1"
+      - gather12: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "2"
+      - gather13: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "3"
+      - gather14: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "4"
+      - gather15: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "6"
+      - gather17: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "7"
+      - gather18: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "8"
+#      - gather1
       - roistat1
       - cb1
       - attr1
@@ -70,11 +101,13 @@ apstools.devices.ad_creator:
       - codec2:
           class: ophyd.areadetector.plugins.CodecPlugin_V34
           suffix: "Codec2:"
-      - badpix1
+      - badpix1:
+          class: common_9id.devices.BadPixelPlugin
+          suffix: "BadPix1:"
       - hdf1:
           class: apstools.devices.AD_EpicsFileNameHDF5Plugin
           read_path_template: "/path/to/bluesky/tmp/"
-          write_path_template: "/path/to/ioc/tmp/"
+          write_path_template: "/gdata/dm/9IDD/2025-2/"
 
 # apstools.devices.ad_creator:
 #   - name: adsimdet
