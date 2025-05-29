@@ -45,6 +45,7 @@ Public Structures
 
 new in release 1.6.0
 """
+import logging
 
 from ophyd import Component as Cpt
 from ophyd import Device
@@ -52,6 +53,9 @@ from ophyd import EpicsSignal
 from ophyd import EpicsMotor
 
 from apstools.utils import SlitGeometry
+
+logger = logging.getLogger(__name__)
+logger.info(__file__)
 
 
 class Optics2Slit1D_soft(Device):

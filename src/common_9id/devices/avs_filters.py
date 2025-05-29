@@ -11,7 +11,7 @@ Device uses PyDevice for attenuation calculation and filter configuration
       The motor record PV controlling the lateral translation of the filter system
 
 """
-
+import logging
 
 from ophyd import Component as Cpt
 from ophyd import FormattedComponent as FCpt
@@ -20,6 +20,8 @@ from ophyd import EpicsSignal, EpicsSignalRO
 from ophyd import EpicsMotor
 from ophyd import PVPositioner
 
+logger = logging.getLogger(__name__)
+logger.info(__file__)
 
 class filter_index(PVPositioner):
     """

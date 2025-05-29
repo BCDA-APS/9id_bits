@@ -87,3 +87,15 @@ OPHYD:
 # Control detail of exception traces in IPython (console and notebook).
 # Options are: Minimal, Plain, Verbose
 XMODE_DEBUG_LEVEL: Minimal
+
+# ----------------------------------------------------------------------
+# 9ID Custom
+
+### Record metadata PVs in data stream; values retrieved at start of plan
+METADATA_PV:
+    ENABLE: true
+
+### Beamline configuration stored before/after experiment
+### usees baseline label to add to baseline data
+BASELINE_LABEL:
+    ENABLE: true

@@ -71,6 +71,32 @@ else:
     from apstools.utils import *  # noqa: F403
     from bluesky import plan_stubs as bps  # noqa: F401
     from bluesky import plans as bp  # noqa: F401
-
-
+        
 RE(make_devices(clear=False))
+
+#-----------------------------------------------------------------------
+# Customized tools for 9id
+#
+# -Adding metadata PVs to own stream
+# -Adding baseline-labeled objects to baseline stream
+#
+#-----------------------------------------------------------------------
+
+# Record metadata PVs
+if iconfig.get("METADATA_PV", {}).get("ENABLE", False):
+    from common_9id.callbacks.metadataPVs import metadataPV_start_preprocessor
+    logger.info("Adding metadata PVs to own stream")
+    
+    try:
+        RE.preprocessors.append(metadataPV_start_preprocessor)
+    except Exception:
+        logger.warning("Could not load support to log metadata PVs")
+
+# Beamline configuration stored before/after experiment
+# uses baseline label to add to baseline data
+if iconfig.get("BASELINE_LABEL", {}).get("ENABLE", False):
+    logger.info("Adding baseline-labeled objects to baseline stream")
+    try:
+        sd.baseline.extend(oregistry.findall("baseline"))
+    except Exception:
+        logger.warning("Could not add baseline-labeled objects to baseline stream")

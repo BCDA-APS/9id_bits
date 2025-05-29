@@ -15,7 +15,7 @@ apstools.devices.SimulatedApsPssShutterWithStatus:
 #   value: 2
  
 # White beam apertures (SL-1, SL-2)
-common_9id.devices.HHLAperture:
+common_9id.devices.HHLApertureWBA:
 - name: slit1
   prefix: "9ida:SL-1:"
   labels: ["slits", "baseline"]
@@ -33,14 +33,15 @@ common_9id.devices.HHLAperture:
   
 # High heat load mirrors (MR-1, MR-2)
 ophyd.EpicsMotor:
+- {name: "mr1_piezo",   prefix: "9ida:FMBO:Piezo:m1", labels: ["motor", "baseline"]}
+- {name: "mr2_piezo",   prefix: "9ida:FMBO:Piezo:m2", labels: ["motor", "baseline"]}
+common_9id.devices.AcsMotor:
 - {name: "mr1_y",       prefix: "9ida:FMBO:m2", labels: ["motor", "baseline"]}
 - {name: "mr1_x",       prefix: "9ida:FMBO:m4", labels: ["motor", "baseline"]}
 - {name: "mr1_pitch",   prefix: "9ida:FMBO:m6", labels: ["motor", "baseline"]}
-- {name: "mr1_piezo",   prefix: "9ida:FMBO:Piezo:m1", labels: ["motor", "baseline"]}
 - {name: "mr2_y",       prefix: "9ida:FMBO:m1", labels: ["motor", "baseline"]}
 - {name: "mr2_x",       prefix: "9ida:FMBO:m3", labels: ["motor", "baseline"]}
 - {name: "mr2_pitch",   prefix: "9ida:FMBO:m5", labels: ["motor", "baseline"]}
-- {name: "mr2_piezo",   prefix: "9ida:FMBO:Piezo:m2", labels: ["motor", "baseline"]}
 - {name: "mr2_bender1", prefix: "9ida:FMBO:m7", labels: ["motor", "baseline"]}
 - {name: "mr1_bender2", prefix: "9ida:FMBO:m8", labels: ["motor", "baseline"]}
 # FLAG 1, FLAG 2, FLAG 3, FLAG 4 -- motors
@@ -152,6 +153,65 @@ common_9id.devices.MyTetrAMM:
   prefix: "9idTetraSpare:QUAD1:"
   port_name: "QUAD1"
   labels: ["tetramm"]
+
+ophyd.EpicsSignal:
+- {name: "file_name", read_pv: "9idd:StrReg1", labels: ["metadataPV"], string: "True"}
+- {name: "file_path", read_pv: "9idd:StrReg2", labels: ["metadataPV"], string: "True"}
+- {name: "metadata_full_path", read_pv: "9idd:StrReg3", labels: ["metadataPV"], string: "True"}
+- {name: "qmap_file", read_pv: "9idd:StrReg4", labels: ["metadataPV"], string: "True"}
+- {name: "analysis_machine", read_pv: "9idd:StrReg5", labels: ["metadataPV"], string: "True"}
+- {name: "workflow_name", read_pv: "9idd:StrReg6", labels: ["metadataPV"], string: "True"}
+- {name: "experiment_name", read_pv: "9idd:StrReg7", labels: ["metadataPV"], string: "True"}
+- {name: "cycle_name", read_pv: "9idd:StrReg8", labels: ["metadataPV"], string: "True"}
+- {name: "sample_name", read_pv: "9idd:StrReg9", labels: ["metadataPV"], string: "True"}
+- {name: "spec_file", read_pv: "9idd:StrReg10", labels: ["metadataPV"], string: "True"}
+- {name: "analysis_type", read_pv: "9idd:StrReg11", labels: ["metadataPV"], string: "True"}
+- {name: "start_bluesky", read_pv: "9idd:StrReg12", labels: ["metadataPV"], string: "True"}
+- {name: "user_description", read_pv: "9idd:StrReg13", labels: ["metadataPV"], string: "True"}
+- {name: "user_comments", read_pv: "9idd:StrReg13", labels: ["metadataPV"], string: "True"}
+- {name: "scattering_orientation", read_pv: "9idd:StrReg13", labels: ["metadataPV"], string: "True"}
+- {name: "measurement_num", read_pv: "9idd:Reg1", labels: ["metadataPV"]}
+- {name: "qnw_index", read_pv: "9idd:Reg2", labels: ["metadataPV"]}
+#- {name: "sample0_pos", read_pv: "9idd:Reg3", labels: ["metadataPV"]}
+#- {name: "sample1_pos", read_pv: "9idd:Reg4", labels: ["metadataPV"]}
+#- {name: "sample2_pos", read_pv: "9idd:Reg5", labels: ["metadataPV"]}
+#- {name: "sample3_pos", read_pv: "9idd:Reg6", labels: ["metadataPV"]}
+#- {name: "sample4_pos", read_pv: "9idd:Reg7", labels: ["metadataPV"]}
+#- {name: "sample5_pos", read_pv: "9idd:Reg8", labels: ["metadataPV"]}
+#- {name: "sample6_pos", read_pv: "9idd:Reg9", labels: ["metadataPV"]}
+#- {name: "sample7_pos", read_pv: "9idd:Reg10", labels: ["metadataPV"]}
+#- {name: "sample8_pos", read_pv: "9idd:Reg11", labels: ["metadataPV"]}
+#- {name: "sample9_pos", read_pv: "9idd:Reg12", labels: ["metadataPV"]}
+#- {name: "sample10_pos", read_pv: "9idd:Reg13", labels: ["metadataPV"]}
+#- {name: "sample11_pos", read_pv: "9idd:Reg14", labels: ["metadataPV"]}
+#- {name: "sample12_pos", read_pv: "9idd:Reg15", labels: ["metadataPV"]}
+#- {name: "sample13_pos", read_pv: "9idd:Reg16", labels: ["metadataPV"]}
+#- {name: "sample14_pos", read_pv: "9idd:Reg17", labels: ["metadataPV"]}
+#- {name: "sample15_pos", read_pv: "9idd:Reg18", labels: ["metadataPV"]}
+#- {name: "sample16_pos", read_pv: "9idd:Reg19", labels: ["metadataPV"]}
+#- {name: "sample17_pos", read_pv: "9idd:Reg20", labels: ["metadataPV"]}
+#- {name: "sample18_pos", read_pv: "9idd:Reg21", labels: ["metadataPV"]}
+#- {name: "sample19_pos", read_pv: "9idd:Reg22", labels: ["metadataPV"]}
+#- {name: "sample20_pos", read_pv: "9idd:Reg23", labels: ["metadataPV"]}
+#- {name: "sample21_pos", read_pv: "9idd:Reg24", labels: ["metadataPV"]}
+#- {name: "sample22_pos", read_pv: "9idd:Reg25", labels: ["metadataPV"]}
+#- {name: "sample23_pos", read_pv: "9idd:Reg26", labels: ["metadataPV"]}
+#- {name: "sample24_pos", read_pv: "9idd:Reg27", labels: ["metadataPV"]}
+#- {name: "sample25_pos", read_pv: "9idd:Reg28", labels: ["metadataPV"]}
+#- {name: "sample26_pos", read_pv: "9idd:Reg29", labels: ["metadataPV"]}
+#- {name: "sample27_pos", read_pv: "9idd:Reg30", labels: ["metadataPV"]}
+#- {name: "eiger_det_x0", read_pv: "9idd:Reg31", labels: ["metadataPV"]}
+#- {name: "eiger_det_y0", read_pv: "9idd:Reg32", labels: ["metadataPV"]}
+#- {name: "eiger_db_x0", read_pv: "9idd:Reg33", labels: ["metadataPV"]}
+#- {name: "eiger_db_y0", read_pv: "9idd:Reg34", labels: ["metadataPV"]}
+#- {name: "rigaku_det_x0", read_pv: "9idd:Reg35", labels: ["metadataPV"]}
+#- {name: "rigaku_det_y0", read_pv: "9idd:Reg36", labels: ["metadataPV"]}
+#- {name: "rigaku_db_x0", read_pv: "9idd:Reg37", labels: ["metadataPV"]}
+#- {name: "rigaku_db_y0", read_pv: "9idd:Reg38", labels: ["metadataPV"]}
+#- {name: "current_det_x0", read_pv: "9idd:Reg39", labels: ["metadataPV"]}
+#- {name: "current_det_y0", read_pv: "9idd:Reg40", labels: ["metadataPV"]}
+#- {name: "current_db_x0", read_pv: "9idd:Reg41", labels: ["metadataPV"]}
+#- {name: "current_db_y0", read_pv: "9idd:Reg42", labels: ["metadataPV"]}
   
 # TODO D-Hutch fast shutter
 

@@ -1,8 +1,13 @@
+import logging
+
 from ophyd import Component as Cpt
 from ophyd import Device
 from ophyd import FormattedComponent as FCpt
 from ophyd import EpicsMotor
 from ophyd import EpicsSignal, EpicsSignalRO
+
+logger = logging.getLogger(__name__)
+logger.info(__file__)
 
 class FlexCombined(Device):
     """
