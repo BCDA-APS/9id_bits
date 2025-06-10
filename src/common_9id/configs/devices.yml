@@ -65,7 +65,7 @@ common_9id.devices.AcsMotor:
 - {name: "slit5_base_hor",  prefix: "9idd:CR9D1M1:m21", labels: ["motor", "baseline"]}
 - {name: "slit5_base_vert", prefix: "9idd:CR9D1M1:m22", labels: ["motor", "baseline"]}
 # KB mirror and granite base (base shared with CSSI sample station
-- {name: "kb_cssi_granite", prefix: "P=9idd:CR9D1M2:m13", labels: ["motor", "baseline"]}
+- {name: "kb_cssi_granite", prefix: "9idd:CR9D1M2:m13", labels: ["motor", "baseline"]}
 
 common_9id.devices.FlexCombinedCap:
 - name: kb_ver_us

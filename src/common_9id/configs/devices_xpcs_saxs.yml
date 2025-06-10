@@ -6,7 +6,7 @@ apsbits.utils.sim_creator.predefined_device:
 - {creator: ophyd.sim.motor, name: sim_motor_xs}
 - {creator: ophyd.sim.noisy_det, name: sim_det_xs}
 
-ophyd.EpicsMotor:
+common_9id.devices.AcsMotor:
 # Grand Tube motors
 - {name: "carriage_hor_bs_y",   prefix: "9idGT:m1", labels: ["motor", "baseline"]}
 - {name: "eiger_hor_bs_y",      prefix: "9idGT:m2", labels: ["motor", "baseline"]}
@@ -22,6 +22,7 @@ ophyd.EpicsMotor:
 - {name: "eiger_y",             prefix: "9idGT:m12", labels: ["motor", "baseline"]}
 #- {name: "eiger_x_enc",        prefix: "9idGT:m15", labels: ["motor", "baseline"]}
 #- {name: "eiger_y_enc",        prefix: "9idGT:m16". labels: ["motor", "baseline"]}
+ophyd.EpicsMotor:
 - {name: "carriage_bs_top",     prefix: "9idGT:mcs2-02:m1", labels: ["motor", "baseline"]}
 - {name: "carriage_bs_mid",     prefix: "9idGT:mcs2-02:m2", labels: ["motor", "baseline"]}
 - {name: "carriage_bs_bot",     prefix: "9idGT:mcs2-02:m3", labels: ["motor", "baseline"]}

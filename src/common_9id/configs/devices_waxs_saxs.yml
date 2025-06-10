@@ -8,14 +8,18 @@ apsbits.utils.sim_creator.predefined_device:
 
 # Motors
 ophyd.EpicsMotor:
+# Sample stage motions
+- {name: "gixs_sam_z", prefix: "9iddVME:m11", labels: ["motor", "baseline"]}
 # Diffractometer motions
-- {name: "gixs_granite", prefix: "9idd:CR9D1M2:m14", labels: ["motor", "baseline"]}
 - {name: "gixs_pmth", prefix: "9idd:CR9D4M1:pmth", labels: ["motor", "baseline"]}
 - {name: "gixs_pmchi", prefix: "9idd:CR9D4M1:pmchi", labels: ["motor", "baseline"]}
-# TODO Sample stage motions
+
+common_9id.devices.AcsMotor:
+# Diffractometer motions
+- {name: "gixs_granite", prefix: "9idd:CR9D1M2:m14", labels: ["motor", "baseline"]}
+# Sample stage motions
 - {name: "gixs_sam_x", prefix: "9idd:CR9D4M1:m3", labels: ["motor", "baseline"]}
 - {name: "gixs_sam_y", prefix: "9idd:CR9D4M1:m5", labels: ["motor", "baseline"]}
-- {name: "gixs_sam_z", prefix: "9iddVME:m11", labels: ["motor", "baseline"]}
 - {name: "gixs_v_phi_f", prefix: "9idd:CR9D4M1:m10", labels: ["motor", "baseline"]}
 - {name: "gixs_v_sam_x", prefix: "9idd:CR9D4M1:m11", labels: ["motor", "baseline"]}
 - {name: "gixs_v_sam_y", prefix: "9idd:CR9D4M1:m12", labels: ["motor", "baseline"]}

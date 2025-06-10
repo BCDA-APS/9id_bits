@@ -125,8 +125,8 @@ class HHLApertureWBA(HHLApertureACS):
     yaw_indexed = Cpt(EpicsSignalRO, "YAW:indexed", kind="config", string = True)
     hor_zeroed  = Cpt(EpicsSignalRO, "HOR:zeroed", kind="config", string = True)
     hor_indexed = Cpt(EpicsSignalRO, "HOR:indexed", kind="config", string = True)
-    diag_zeroed  = Cpt(EpicsSignalRO, "VERT:zeroed", kind="config", string = True)
-    diag_indexed = Cpt(EpicsSignalRO, "VERT:indexed", kind="config", string = True)
+    diag_zeroed  = Cpt(EpicsSignalRO, "DIAG:zeroed", kind="config", string = True)
+    diag_indexed = Cpt(EpicsSignalRO, "DIAG:indexed", kind="config", string = True)
 
 
 

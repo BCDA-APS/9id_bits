@@ -48,17 +48,17 @@ class FlexCombined(Device):
         super().__init__(prefix, *args, **kwargs)
 
 
-    combined = FCpt(EpicsMotor, "{_combined}", labels={"motors"})
+    combined = FCpt(EpicsMotor, "{prefix}{_combined}", labels={"motors"})
     # Real motors that when combined produce the total motion
-    fine = FCpt(EpicsMotor, "{_fine}", labels={"motors"})
-    coarse = FCpt(EpicsMotor, "{_coarse}", labels={"motors"})
+    fine = FCpt(EpicsMotor, "{prefix}{_fine}", labels={"motors"})
+    coarse = FCpt(EpicsMotor, "{prefix}{_coarse}", labels={"motors"})
 
 
-    mode = FCpt(EpicsSignal, "{_combined}:mode", kind="config")
-    rehomed = FCpt(EpicsSignalRO, "{_combined}:rehome", kind="config")
-    piezoUpperLimit = FCpt(EpicsSignal, "{_combined}:upperLimit", kind="config")
-    piezoLowerLimit = FCpt(EpicsSignal, "{_combined}:lowerLimit", kind="config")
-    piezoHomePos = FCpt(EpicsSignal, "{_combined}:homePos", kind="config")
+    mode = FCpt(EpicsSignal, "{prefix}{_combined}:mode", kind="config")
+    rehomed = FCpt(EpicsSignalRO, "{prefix}{_combined}:rehome", kind="config")
+    piezoUpperLimit = FCpt(EpicsSignal, "{prefix}{_combined}:upperLimit", kind="config")
+    piezoLowerLimit = FCpt(EpicsSignal, "{prefix}{_combined}:lowerLimit", kind="config")
+    piezoHomePos = FCpt(EpicsSignal, "{prefix}{_combined}:homePos", kind="config")
     
 
 

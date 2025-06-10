@@ -97,6 +97,16 @@ if iconfig.get("METADATA_PV", {}).get("ENABLE", False):
 if iconfig.get("BASELINE_LABEL", {}).get("ENABLE", False):
     logger.info("Adding baseline-labeled objects to baseline stream")
     try:
-        sd.baseline.extend(oregistry.findall("baseline"))
-    except Exception:
+        baseline = oregistry.findall("baseline", allow_none=True) or []
+        for b in baseline:
+            try:
+                b.wait_for_connection()
+                sd.baseline.append(b)
+            except:
+                logger.info("%s not connected and not added to baseline", b.name)
+    except Exception as error:
+        print(
+            "\n"
+            f"Could not create baseline stream for RE. {error=}\n"
+        )
         logger.warning("Could not add baseline-labeled objects to baseline stream")
