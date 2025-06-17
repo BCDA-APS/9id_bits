@@ -15,7 +15,7 @@ common_9id.devices.AcsMotor:
 # TODO complete/update Pilatus 1M detector
 apstools.devices.ad_creator:
   - name: pilatus1m
-    prefix: "ad:"
+    prefix: "PILATUS_1MF:"
     labels: ["area_detector", "detectors"]
     plugins:
       - cam:

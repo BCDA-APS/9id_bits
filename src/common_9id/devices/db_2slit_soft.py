@@ -12,7 +12,7 @@ Coordinates of ``Optics2Slit2D_HV`` (viewing from detector towards source)::
     h.xn    h.xp
         v.xn
 
-Each blade [#]_ (in the XIA slit controller) travels in a _cartesian_ coordinate
+Each blade [#]_ travels in a _cartesian_ coordinate
 system.  Positive motion moves a blade **outwards** (towards the ``p`` suffix).
 Negative motion moves towards the ``n`` suffix.  Size and center are computed
 by the underlying EPICS support.
@@ -38,7 +38,7 @@ Public Structures
 
 .. autosummary::
 
-    ~Optics2Slit1D_soft
+    ~c_soft
     ~Optics2Slit2D_soft
 
 :see: https://github.com/epics-modules/optics
@@ -100,14 +100,3 @@ class Optics2Slit2D_soft(Device):
         self.v.size.move(height)
         self.h.center.move(x)
         self.v.center.move(y)
-
-
-# -----------------------------------------------------------------------------
-# :author:    Pete R. Jemian
-# :email:     jemian@anl.gov
-# :copyright: (c) 2017-2024, UChicago Argonne, LLC
-#
-# Distributed under the terms of the Argonne National Laboratory Open Source License.
-#
-# The full license is in the file LICENSE.txt, distributed with this software.
-# -----------------------------------------------------------------------------
