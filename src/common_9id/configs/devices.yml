@@ -8,6 +8,10 @@ apstools.devices.SimulatedApsPssShutterWithStatus:
 - name: shutter
   labels: ["shutters"]
 
+apstools.devices.aps_undulator.PlanarUndulator:
+- name: undulator
+  prefix: "S09ID:DSID:"
+
 # ophyd.Signal:
 # - name: test
 #   value: 50.7

@@ -67,3 +67,19 @@ def sim_rel_scan_plan(
     print(f"sim_rel_scan_plan(): {sim_det.read_configuration()=}.")
     print(f"sim_rel_scan_plan(): {sim_det.noise._enum_strs=}.")
     yield from bp.rel_scan([sim_det], sim_motor, -span / 2, span / 2, num=num, md=md)
+
+
+def joe_print_plan():
+    """Demonstrate a ``print()`` plan stub (no data streams)."""
+    logger.debug("sim_print_plan()")
+    """
+    yield from bps.null()
+    sim_det = oregistry["sim_det"]
+    sim_motor = oregistry["sim_motor"]
+    """
+    print("sim_print_plan(): This is a test.")
+    """
+    print(f"sim_print_plan():  {sim_motor.position=}  {sim_det.read()=}.")
+    """
+
+
