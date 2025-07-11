@@ -39,7 +39,7 @@ USE_BLUESKY_MAGICS: true
 BEC:
     BASELINE: false
     HEADING: true
-    PLOTS: true
+    PLOTS: false
     TABLE: true
 
 ### Support for known output file formats.

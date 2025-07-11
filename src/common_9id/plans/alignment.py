@@ -5,14 +5,34 @@ Alignment plans for 9ID
 For development and testing only, provides plans.
 
 .. autosummary::
+    ~edge_align_ad
     ~center_and_parallelize
 """
 
+import datetime
 import logging
+import sys
+
+import numpy as np
+import pyRestTable
+from scipy.optimize import curve_fit
+from scipy.special import erf
 
 from bluesky import plan_stubs as bps
 from bluesky import plans as bp
 from blueksy import plan_patterns
+from bluesky import preprocessors as bpp
+from bluesky.callbacks.fitting import PeakStats
+from ophyd import Component
+from ophyd import Device
+from ophyd import Signal
+from ophyd.scaler import ScalerCH
+from ophyd.scaler import ScalerChannel
+
+from apstools import utils
+from apstools.plans.doc_run import write_stream
+
+from ..devices.adplugin_support import prepare_STATS
 
 try:
     # cytools is a drop-in replacement for toolz, implemented in Cython
@@ -24,12 +44,133 @@ from apsbits.utils.controls_setup import oregistry
 
 logger = logging.getLogger(__name__)
 logger.bsdev(__file__)
+# This was from original edge_align/alignment.py from apstools
+# MAIN = sys.modules["__main__"]
+
+def edge_align_ad(detectors, mover, start, end, points, adplugin = {"stats_n" : 1, "stat": "total"}, cat=None, md={}):
+    """
+    Align to the edge given mover & detector data, relative to absolute position.
+
+    This plan can be used in the queueserver, Jupyter notebooks, and IPython
+    consoles.
+
+    PARAMETERS
+    ----------
+    detectors *Readable* or [*Readable*]:
+        Detector object or list of detector objects (each is a Device or
+        Signal).
+
+    mover *Movable*:
+        Mover object, such as motor or other positioner.
+
+    start *float*:
+        Starting point for the scan. This is an absolute motor location.
+
+    end *float*:
+        Ending point for the scan. This is an absolute motor location.
+
+    points *int*:
+        Number of points in the scan.
+
+   adplugin *dict*:
+        Which stats plugin/signal to use in matching erf to
+
+    cat *databroker.temp().v2*:
+        Catalog where bluesky data is saved and can be retrieved from.
+
+    md *dict*:
+        User-supplied metadata for this scan.
+    """
+
+    def guess_erf_params(x_data, y_data):
+        """
+        Provide an initial guess for the parameters of an error function.
+
+        Parameters
+        ----------
+        x_data : A numpy array of the values on the x_axis
+        y_data : A numpy array of the values on the y_axis
+
+        Returns
+        -------
+        guess : dict
+            A dictionary containing the guessed parameters 'low_y_data', 'high_y_data', 'width', and 'midpoint'.
+        """
+
+        # Sort data to make finding the mid-point easier and to assist in other estimations
+        y_data_sorted = np.sort(y_data)
+        x_data_sorted = np.sort(x_data)
+
+        # Estimate low and high as the first and last elements (assuming sorted data)
+        low_y_data = np.min(y_data_sorted)
+        high_y_data = np.max(y_data_sorted)
+
+        low_x_data = np.min(x_data_sorted)
+        high_x_data = np.max(x_data_sorted)
+
+        # Estimate width as a fraction of the range. This is very arbitrary and might need tuning!
+        # This is a guess and might need adjustment based on your data's characteristics.
+        width = (high_x_data - low_x_data) / 10
+
+        # Estimate the midpoint of the x values
+        midpoint = x_data[int(len(x_data) / 2)]
+
+        return [low_y_data, high_y_data, width, midpoint]
+
+    def erf_model(x, low, high, width, midpoint):
+        """
+        Create error function for fitting and simulation
+
+        Parameters
+        ----------
+        x       :   input upon which error function is evaluated
+        low     :   min value of error function
+        high    :   max value of error function
+        width   :   "spread" of error function transition region
+        midpoint:   location of error function's "center"
+        """
+        return (high - low) * 0.5 * (1 - erf((x - midpoint) / width)) + low
+
+    if not isinstance(detectors, (tuple, list)):
+        detectors = [detectors]
+
+    if not isinstance(adplugin["stat"], (tuple, list)):
+        adplugin["stat"] = [adplugin["stat"]]
+
+
+    _md = dict(purpose="edge_align")
+    _md.update(md or {})
+
+    prepare_STATS(detectors[0], STATS_num=adplugin["stats_n"], BEC=adplugin["stat"], read_attrs=adplugin["stat"])
+
+    uid = yield from bp.scan(detectors, mover, start, end, points, md=_md)
+    cat = cat or utils.getCatalog()
+    run = cat[uid]  # return uids
+    ds = run.primary.read()
+
+    x = ds[mover.name]
+    y_signal_name = detectors[0].name+'_stats'+str(adplugin["stats_n"])+'_'+adplugin["stat"][0]
+    y = ds[y_signal_name]
+
+    try:
+        initial_guess = guess_erf_params(x, y)
+        popt, pcov = curve_fit(erf_model, x, y, p0=initial_guess)
+        if pcov[3, 3] != np.inf:
+            print("Significant signal change detected; motor moving to detected edge.")
+            yield from bps.mv(mover, popt[3])
+        else:
+            raise Exception
+    except Exception as reason:
+        print(f"reason: {reason}")
+        print("No significant signal change detected; motor movement skipped.")
+
+
+
+
+
 
 #DEFAULT_MD = {"title": "test run with simulator(s)"}
-
-
-
-# need to expand mover for translation and pitch motors -- is this the right way? Should look at scan_2d or grid_scan..
+# TODO need to expand mover for translation and pitch motors -- is this the right way? Should look at scan_2d or grid_scan..
 def center_and_parallel(    
 	detectors: Sequence[Readable],
     *args,
