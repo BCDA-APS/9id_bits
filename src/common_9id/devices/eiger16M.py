@@ -2,9 +2,10 @@ import logging
 
 from apstools.devices.area_detector_support import CamMixin_V34
 from ophyd import ADComponent
-from ophyd.areadetector import EigerDetectorCam
+from ophyd.areadetector import CamBase, EigerDetectorCam
 from ophyd import EpicsSignal
 from ophyd.areadetector.plugins import PluginBase
+from ophyd.areadetector.base import EpicsSignalWithRBV as SignalWithRBV
 
 logger = logging.getLogger(__name__)
 logger.info(__file__)
@@ -19,6 +20,41 @@ class EigerDetectorCam_V34(CamMixin_V34, EigerDetectorCam):
         kind="omitted",
         string=True,
     )
+
+class Eiger2DetectorCam_V34(CamMixin_V34, EigerDetectorCam):
+    """Adds triggering configuration and AcquireBusy support.
+    
+       Replaces Threshhold energy with Threshold Energy1 and Threshold 
+       Enery2
+    
+    """
+    _default_configuration_attrs = CamBase._default_configuration_attrs + (
+        "shutter_mode",
+        "num_triggers",
+        "beam_center_x",
+        "beam_center_y",
+        "wavelength",
+        "det_distance",
+        "threshold1_energy",
+        "threshold2_energy",
+        "photon_energy",
+        "manual_trigger",
+        "special_trigger_button",
+    )
+    
+    initialize = ADComponent(EpicsSignal, "Initialize", kind="config")
+    
+    threshold_energy = None
+    threshold1_energy = ADComponent(SignalWithRBV, "ThresholdEnergy")
+    threshold2_energy = ADComponent(SignalWithRBV, "Threshold2Energy")
+
+    nd_attr_status = ADComponent(
+        EpicsSignal,
+        "NDAttributesStatus",
+        kind="omitted",
+        string=True,
+    )
+
 
 class BadPixelPlugin(PluginBase):
     """

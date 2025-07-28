@@ -12,6 +12,10 @@ apstools.devices.aps_undulator.PlanarUndulator:
 - name: undulator
   prefix: "S09ID:DSID:"
 
+common_9id.devices.fastShutter:
+- name: fastShutter
+  prefix: "9idd:fastshutter:"
+  
 # ophyd.Signal:
 # - name: test
 #   value: 50.7
@@ -224,77 +228,77 @@ ophyd.EpicsSignal:
 
 # TODO AD for FLAG 1, FLAG 2, FLAG 3, FLAG 4 
 
-#apstools.devices.ad_creator:
-#  - name: eiger16m
-#    prefix: "9idEiger16m:"
-#    labels: ["area_detector", "detectors"]
-#    plugins:
-#      - cam:
-#          class: common_9id.devices.EigerDetectorCam_V34
-#      - image
-#      - pva
-#      - process1
-#      - transform1
-#      - cc1
-#      - cc2
-#      - overlay1
-#      - roi1
-#      - roi2
-#      - roi3
-#      - roi4
-#      - stats1
-#      - stats2
-#      - stats3
-#      - stats4
-#      - stats5
-#      - scatter1
-#      - gather1: 
-#          class: ophyd.areadetector.plugins.GatherPlugin
-#          suffix: "Gather1:"
-#      - gather11: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "1"
-#      - gather12: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "2"
-#      - gather13: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "3"
-#      - gather14: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "4"
-#      - gather15: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "6"
-#      - gather17: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "7"
-#      - gather18: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "8"
-##      - gather1
-#      - roistat1
-#      - cb1
-#      - attr1
-#      - fft1
-#      - codec1
-#      - codec2:
-#          class: ophyd.areadetector.plugins.CodecPlugin_V34
-#          suffix: "Codec2:"
-#      - badpix1:
-#          class: common_9id.devices.BadPixelPlugin
-#          suffix: "BadPix1:"
-#      - hdf1:
-#          class: apstools.devices.AD_EpicsFileNameHDF5Plugin
-#          read_path_template: "/path/to/bluesky/tmp/"
-#          write_path_template: "/gdata/dm/9IDD/2025-2/"
+apstools.devices.ad_creator:
+  - name: eiger16m
+    prefix: "9idEiger16m:"
+    labels: ["area_detector", "detectors"]
+    plugins:
+      - cam:
+          class: common_9id.devices.Eiger2DetectorCam_V34
+      - image
+      - pva
+      - process1
+      - transform1
+      - cc1
+      - cc2
+      - overlay1
+      - roi1
+      - roi2
+      - roi3
+      - roi4
+      - stats1
+      - stats2
+      - stats3
+      - stats4
+      - stats5
+      - scatter1
+      - gather1: 
+          class: ophyd.areadetector.plugins.GatherPlugin
+          suffix: "Gather1:"
+      - gather11: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "1"
+      - gather12: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "2"
+      - gather13: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "3"
+      - gather14: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "4"
+      - gather15: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "6"
+      - gather17: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "7"
+      - gather18: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "8"
+#      - gather1
+      - roistat1
+      - cb1
+      - attr1
+      - fft1
+      - codec1
+      - codec2:
+          class: ophyd.areadetector.plugins.CodecPlugin_V34
+          suffix: "Codec2:"
+      - badpix1:
+          class: common_9id.devices.BadPixelPlugin
+          suffix: "BadPix1:"
+      - hdf1:
+          class: apstools.devices.AD_EpicsFileNameHDF5Plugin
+          read_path_template: "/path/to/bluesky/tmp/"
+          write_path_template: "/gdata/dm/9IDD/2025-2/"
 
 
 # apstools.devices.ad_creator:
