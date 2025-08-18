@@ -9,8 +9,8 @@ common_9id.devices.AcsMotor:
 - {name: "b_stop_x", prefix: "9idd:CR9D4M1:m14", labels: ["motor", "baseline"]}
 - {name: "b_stop_z", prefix: "9idd:CR9D4M1:m15", labels: ["motor", "baseline"]}
 # detector pedestal motions
-- {name: "waxs_x_gixs_ped1", prefix: "9idd:CR9D1M2:m19", labels: ["motor", "baseline"]}
-- {name: "waxs_y_gixs_ped2", prefix: "9idd:CR9D1M2:m20", labels: ["motor", "baseline"]}
+- {name: "waxs_x_gixs_ped1", prefix: "9idd:CR9D1M1:m31", labels: ["motor", "baseline"]}
+- {name: "waxs_y_gixs_ped2", prefix: "9idd:CR9D1M1:m32", labels: ["motor", "baseline"]}
 
 # TODO complete/update Pilatus 1M detector
 apstools.devices.ad_creator:

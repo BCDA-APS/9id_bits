@@ -1,15 +1,163 @@
 import logging
 
 from apstools.devices.area_detector_support import CamMixin_V34
+from ophyd import Component as Cpt
+from ophyd import FormattedComponent as FCpt
+from ophyd import Device
+from ophyd import EpicsSignal, EpicsSignalRO
 from ophyd import ADComponent
 from ophyd.areadetector import CamBase, EigerDetectorCam
-from ophyd import EpicsSignal
 from ophyd.areadetector.plugins import PluginBase
 from ophyd.areadetector.base import EpicsSignalWithRBV as SignalWithRBV
+from ophyd.areadetector.trigger_mixins import TriggerBase, ADTriggerStatus
+from ophyd.status import wait as status_wait, SubscriptionStatus
+from ophyd.areadetector.detectors import DetectorBase
 
 logger = logging.getLogger(__name__)
 logger.info(__file__)
 
+
+class FancyTrigger(TriggerBase):
+    """
+    TODO: Update to handle Eiger's Multiple Enable w/ + w/o motors along
+    with internal series (though Multiple Enable w/o motors may replace
+    internal series for alignment tasks as it handles shutter better)
+    
+    In Mulitple Enable + motors:
+        SG trigger count = 1
+        AD NumImage = # of motor points
+        Acquire set during staging?
+        trigger fxn calls SG trigger (set to "1!"
+        
+    In Multiple Enable w/o motors:
+        SG trigger count = AD NumImage
+        Acquire set during staging?
+        trigger fxn calls SG trigger (set to "1!"
+        
+    
+    """
+    _status_type = ADTriggerStatus
+    
+    def __init__(self, *args, sg_trigger = None, image_name=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if image_name is None:
+            image_name = "_".join([self.name, "image"])
+        self._image_name = image_name
+        if sg_trigger is None:
+            sg_trigger = "cam1:".join([self.prefix, "Trigger"])
+        self._sg_trigger = sg_trigger
+        
+    
+    sg_on_time = FCpt(EpicsSignal, "{sg_trigger}userTran1.C", labels={"area_detector","trigger"})
+    sg_period = FCpt(EpicsSignal, "{sg_trigger}userTran1.A", labels={"area_detector","trigger"})
+    sg_shutter_delay = FCpt(EpicsSignal, "{sg_trigger}userTran1.E", labels={"area_detector","trigger"})
+    sg_num_triggers = FCpt(EpicsSignal, "{sg_trigger}userTran1.J", labels={"area_detector","trigger"})
+    sg_trigger = FCpt(EpicsSignal, "{sg_trigger}SG:plsTrn-1_Inp_Signal", labels={"area_detector","trigger"})
+    
+        
+    def stage(self):
+        if self.trigger_mode == 3:          #   External Enable mode
+            '''
+            TODO: create flag for w/ and w/o motor scan
+            '''
+            # self.motor_scan = True | False
+
+
+            '''
+            Soft glue setup
+            set softglue num trigger (9iddMZds:userTran1.J)
+            to 1 (motor scan) or AD's NumImages_RBV (no motors)
+            '''
+            
+            # Set Acquire to 1
+            self._acquisition_signal.put(1, wait = False)
+        else: 
+            self._acquisition_signal.subscribe(self._acquire_changed)
+        
+        # if HDF file saving on
+        #   start capture
+        
+        super().stage()
+
+
+    def unstage(self):
+        super().unstage()
+        
+        # if HDF file saving on
+        #   stop capture
+
+        
+        self._acquisition_signal.clear_sub(self._acquire_changed)
+
+    def trigger(self):
+        "Trigger one acquisition."
+        if self._staged != Staged.yes:
+            raise RuntimeError(
+                "This detector is not ready to trigger."
+                "Call the stage() method before triggering."
+            )
+
+        self._status = self._status_type(self)
+
+        if self.trigger_mode == 3:          #   External Enable mode
+            self._ext_trigger_signal.put('1!', wait = False)
+        else: 
+            self._acquisition_signal.put(1, wait=False)
+
+        self.generate_datum(self._image_name, ttime.time(), {})
+        return self._status
+
+    def _acquire_changed(self, value=None, old_value=None, **kwargs):
+        "This is called when the 'acquire' signal changes."
+        if self._status is None:
+            return
+        if (old_value == 1) and (value == 0):
+            # Negative-going edge means an acquisition just finished.
+            self._status.set_finished()
+            self._status = None
+
+    def prime_sg(self, 
+        count : bool = True, 
+        num_frames : int = None, 
+        shutter_delay : float = None,
+        on_time : float = None,
+        period : float = None
+        ):
+            
+        '''
+        Set up softglue for triggering eiger 
+        ''' 
+    
+        if count:
+            if num_frames is None:
+                self.ext_trigger_num.put(self.cam.num_images.get(), wait = False)
+            else:
+                self.ext_trigger_num.put(num_frames, wait = False)
+                self.cam.num_images.put(num_frames, wait = False)
+        else:
+            self.ext_trigger_num.put(1, wait = False)
+            if num_frames is not None:
+                self.cam.num_images.put(num_frames, wait = False)
+                
+        if shutter_delay is None:
+#           self.sg_shutter_delay.put(self.cam.shutter_delay.get(), wait = False)
+            pass
+        else:
+#           self.sg_shutter_delay.put(shutter_delay, wait = False) 
+            self.sg_shutter_delay.put(shutter_delay, wait = False) 
+            
+        if on_time is None:
+            self.sg_on_time.put(self.cam.exposure_time.get(), wait = False)
+        else:
+            self.cam.exposure_time.put(on_time, wait = False)
+            self.sg_on_time.put(on_time, wait = False)
+                    
+        if period is None:
+            self.sg_period.put(self.cam.acquire_period.get(), wait = False)
+        else:
+            self.cam.acquire_period.put(period, wait = False)
+            self.sg_period.put(period, wait = False)
+          
 
 class EigerDetectorCam_V34(CamMixin_V34, EigerDetectorCam):
     """Adds triggering configuration and AcquireBusy support."""
@@ -55,6 +203,34 @@ class Eiger2DetectorCam_V34(CamMixin_V34, EigerDetectorCam):
         string=True,
     )
 
+    def save_images_on(self):
+        def check_value(*, old_value, value, **kwargs):
+            "Return True when file writer is enabled"
+            return value == "ready"
+
+        self.cam.fw_enable.put("Enable")
+        status_wait(
+            SubscriptionStatus(self.cam.fw_state, check_value, timeout=10)
+        )
+
+    def save_images_off(self):
+        def check_value(*, old_value, value, **kwargs):
+            "Return True when file writer is disabled"
+            return value == "disabled"
+
+        self.cam.fw_enable.put("Disable")
+        status_wait(
+            SubscriptionStatus(self.cam.fw_state, check_value, timeout=10)
+        )
+
+
+class FancyEigerDetector(FancyTrigger, DetectorBase):
+    """
+    
+    """
+    
+    pass
+    
 
 class BadPixelPlugin(PluginBase):
     """
@@ -65,3 +241,5 @@ class BadPixelPlugin(PluginBase):
     _html_docs = ["NDBadPixelDoc.html"]
     
     file_name = ADComponent(EpicsSignal, "FileName", string=True)
+
+

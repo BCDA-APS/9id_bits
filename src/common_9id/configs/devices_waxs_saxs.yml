@@ -16,7 +16,7 @@ ophyd.EpicsMotor:
 
 common_9id.devices.AcsMotor:
 # Diffractometer motions
-- {name: "gixs_granite", prefix: "9idd:CR9D1M2:m14", labels: ["motor", "baseline"]}
+- {name: "gixs_granite", prefix: "9idd:CR9D1M1:m30", labels: ["motor", "baseline"]}
 # Sample stage motions
 - {name: "gixs_sam_x", prefix: "9idd:CR9D4M1:m3", labels: ["motor", "baseline"]}
 - {name: "gixs_sam_y", prefix: "9idd:CR9D4M1:m5", labels: ["motor", "baseline"]}

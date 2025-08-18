@@ -73,7 +73,7 @@ common_9id.devices.AcsMotor:
 - {name: "slit5_base_hor",  prefix: "9idd:CR9D1M1:m21", labels: ["motor", "baseline"]}
 - {name: "slit5_base_vert", prefix: "9idd:CR9D1M1:m22", labels: ["motor", "baseline"]}
 # KB mirror and granite base (base shared with CSSI sample station
-- {name: "kb_cssi_granite", prefix: "9idd:CR9D1M2:m13", labels: ["motor", "baseline"]}
+- {name: "kb_cssi_granite", prefix: "9idd:CR9D1M1:m29", labels: ["motor", "baseline"]}
 
 common_9id.devices.FlexCombinedCap:
 - name: kb_ver_us
@@ -149,19 +149,19 @@ common_9id.devices.JJtransfocator2xZ:
 
 #TetrAMM
 #ophyd.TetrAMM:
-common_9id.devices.MyTetrAMM:
-- name: tetramm1
-  prefix: "9idTetra:QUAD1:"
-  port_name: "QUAD1"
-  labels: ["tetramm"]
-- name: tetramm2
-  prefix: "9idTetra:QUAD2:"
-  port_name: "QUAD2"
-  labels: ["tetramm"]
-- name: tetrammSpare
-  prefix: "9idTetraSpare:QUAD1:"
-  port_name: "QUAD1"
-  labels: ["tetramm"]
+#common_9id.devices.MyTetrAMM:
+#- name: tetramm1
+#  prefix: "9idTetra:QUAD1:"
+#  port_name: "QUAD1"
+#  labels: ["tetramm"]
+#- name: tetramm2
+#  prefix: "9idTetra:QUAD2:"
+#  port_name: "QUAD2"
+#  labels: ["tetramm"]
+#- name: tetrammSpare
+#  prefix: "9idTetraSpare:QUAD1:"
+#  port_name: "QUAD1"
+#  labels: ["tetramm"]
 
 ophyd.EpicsSignal:
 - {name: "file_name", read_pv: "9idd:StrReg1", labels: ["metadataPV"], string: "True"}
@@ -232,6 +232,8 @@ apstools.devices.ad_creator:
   - name: eiger16m
     prefix: "9idEiger16m:"
     labels: ["area_detector", "detectors"]
+    bases: !!python/name:common_9id.devices.FancyEigerDetector
+    sg_trigger: "9iddMZds:"
     plugins:
       - cam:
           class: common_9id.devices.Eiger2DetectorCam_V34
@@ -283,7 +285,6 @@ apstools.devices.ad_creator:
           class: ophyd.areadetector.plugins.GatherNPlugin_V31
           suffix: "Gather1:"
           index: "8"
-#      - gather1
       - roistat1
       - cb1
       - attr1
