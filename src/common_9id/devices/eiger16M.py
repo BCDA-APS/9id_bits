@@ -58,6 +58,8 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         if image_name is None:
             image_name = "_".join([self.name, "image"])
         self._image_name = image_name
+        self._image_count = self.cam.num_images_counter
+        self._ext_mode = 0
         try:
             comp = getattr(self, 'hdf1')
         except AttributeError:
@@ -67,21 +69,12 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         
     def stage(self):
         if self.trigger_mode == 3:          #   External Enable mode
-            '''
-            TODO: create flag for w/ and w/o motor scan
-            '''
-            # self.motor_scan = True | False
-
-
-            '''
-            Soft glue setup
-            set softglue num trigger (9iddMZds:userTran1.J)
-            to 1 (motor scan) or AD's NumImages_RBV (no motors)
-            '''
-            
             # Set Acquire to 1
             self._acquisition_signal.put(1, wait = False)
-        else: 
+            # TODO what signal to subscribe to check if acquire is complete?
+            self._image_count.subscribe(self._image_count_changed)
+            self._total_images = int(self.sg_num_triggers.get())
+        else:                               #   Presumably in internal series mode
             self._acquisition_signal.subscribe(self._acquire_changed)
         
         self._hdf_on = self.hdf1.enable.get()
@@ -97,7 +90,10 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         if self._hdf_on:
             self.hdf1.capture.put(0)
        
-        self._acquisition_signal.clear_sub(self._acquire_changed)
+        if self.trigger_mode == 3:          #   External Enable mode
+            self._image_count.clear_sub(self._image_count_changed)
+        else:                               #   Presumably in internal series mode
+            self._acquisition_signal.clear_sub(self._acquire_changed)
 
     def trigger(self):
         "Trigger one acquisition."
@@ -111,7 +107,7 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
 
         if self.trigger_mode == 3:          #   External Enable mode
             self.sg_trigger.put('1!', wait = False)
-        else: 
+        else:                               #   Presumably in internal series mode
             self._acquisition_signal.put(1, wait=False)
 
         self.generate_datum(self._image_name, ttime.time(), {})
@@ -121,11 +117,20 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         "This is called when the 'acquire' signal changes."
         if self._status is None:
             return
+        
         if (old_value == 1) and (value == 0):
             # Negative-going edge means an acquisition just finished.
             self._status.set_finished()
             self._status = None
-
+                        
+    def _image_count_changed(self, value=None, old_value=None, **kwargs):
+        "This is called when the 'acquire' signal changes."
+        if self._status is None:
+            return
+        if value > self._total_images:  # There is a new image!
+            self._status.set_finished()
+            self._status = None
+    
     def prime_sg(self, 
         count : bool = True, 
         num_frames : int = None, 
