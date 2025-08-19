@@ -16,8 +16,23 @@ from ophyd.areadetector.detectors import DetectorBase
 logger = logging.getLogger(__name__)
 logger.info(__file__)
 
+class SoftglueTrigger(Device):
+    
+    def __init__(self, *args, sg_trigger = None, image_name=None, **kwargs):
+        if sg_trigger is None:
+            sg_trigger = "cam1:".join([self.prefix, "Trigger"])
+        self._sg_trigger = sg_trigger
+        super().__init__(*args, **kwargs)
+        
+    # This won't work if sg_trigger defaults to cam's Trigger -- need to rethink
+    sg_on_time = FCpt(EpicsSignal, "{_sg_trigger}userTran1.C", labels={"area_detector","trigger"})
+    sg_period = FCpt(EpicsSignal, "{_sg_trigger}userTran1.A", labels={"area_detector","trigger"})
+    sg_shutter_delay = FCpt(EpicsSignal, "{_sg_trigger}userTran1.E", labels={"area_detector","trigger"})
+    sg_num_triggers = FCpt(EpicsSignal, "{_sg_trigger}userTran1.J", labels={"area_detector","trigger"})
+    sg_trigger = FCpt(EpicsSignal, "{_sg_trigger}SG:plsTrn-1_Inp_Signal", labels={"area_detector","trigger"})
 
-class FancyTrigger(TriggerBase):
+
+class FancyTrigger(SoftglueTrigger, TriggerBase):
     """
     TODO: Update to handle Eiger's Multiple Enable w/ + w/o motors along
     with internal series (though Multiple Enable w/o motors may replace
@@ -38,22 +53,17 @@ class FancyTrigger(TriggerBase):
     """
     _status_type = ADTriggerStatus
     
-    def __init__(self, *args, sg_trigger = None, image_name=None, **kwargs):
+    def __init__(self, *args, image_name=None, **kwargs):
         super().__init__(*args, **kwargs)
         if image_name is None:
             image_name = "_".join([self.name, "image"])
         self._image_name = image_name
-        if sg_trigger is None:
-            sg_trigger = "cam1:".join([self.prefix, "Trigger"])
-        self._sg_trigger = sg_trigger
-        
-    
-    sg_on_time = FCpt(EpicsSignal, "{sg_trigger}userTran1.C", labels={"area_detector","trigger"})
-    sg_period = FCpt(EpicsSignal, "{sg_trigger}userTran1.A", labels={"area_detector","trigger"})
-    sg_shutter_delay = FCpt(EpicsSignal, "{sg_trigger}userTran1.E", labels={"area_detector","trigger"})
-    sg_num_triggers = FCpt(EpicsSignal, "{sg_trigger}userTran1.J", labels={"area_detector","trigger"})
-    sg_trigger = FCpt(EpicsSignal, "{sg_trigger}SG:plsTrn-1_Inp_Signal", labels={"area_detector","trigger"})
-    
+        try:
+            comp = getattr(self, 'hdf1')
+        except AttributeError:
+            self._hdf_on = False
+        else:
+            self._hdf_on = True
         
     def stage(self):
         if self.trigger_mode == 3:          #   External Enable mode
@@ -74,8 +84,9 @@ class FancyTrigger(TriggerBase):
         else: 
             self._acquisition_signal.subscribe(self._acquire_changed)
         
-        # if HDF file saving on
-        #   start capture
+        self._hdf_on = self.hdf1.enable.get()
+        if self._hdf_on:
+            self.hdf1.capture.put(1)
         
         super().stage()
 
@@ -83,10 +94,9 @@ class FancyTrigger(TriggerBase):
     def unstage(self):
         super().unstage()
         
-        # if HDF file saving on
-        #   stop capture
-
-        
+        if self._hdf_on:
+            self.hdf1.capture.put(0)
+       
         self._acquisition_signal.clear_sub(self._acquire_changed)
 
     def trigger(self):
@@ -100,7 +110,7 @@ class FancyTrigger(TriggerBase):
         self._status = self._status_type(self)
 
         if self.trigger_mode == 3:          #   External Enable mode
-            self._ext_trigger_signal.put('1!', wait = False)
+            self.sg_trigger.put('1!', wait = False)
         else: 
             self._acquisition_signal.put(1, wait=False)
 
@@ -126,19 +136,43 @@ class FancyTrigger(TriggerBase):
             
         '''
         Set up softglue for triggering eiger 
+        
+        Parameters
+        ==========
+
+        count : bool = True
+        set to true if count plan to be run otherwise set to false 
+        
+        num_frames : int = None, 
+        Number of frames at each point; for motor scan set to num of steps 
+        in scan; for count set to total number of images desired. By default 
+        will get from AD NumImage_RBV
+        
+        shutter_delay : float = None,
+        Shutter delay in seconds
+        
+        on_time : float = None,
+        Exposure time in seconds. If not set, will get from AD's Acquire Time
+        
+        period : float = None
+        Acquire period (>= exposure time) in seconds.  If not set, will get
+        from AD Acquire Period
+
         ''' 
     
         if count:
             if num_frames is None:
-                self.ext_trigger_num.put(self.cam.num_images.get(), wait = False)
+                self.sg_num_triggers.put(self.cam.num_images.get(), wait = False)
             else:
-                self.ext_trigger_num.put(num_frames, wait = False)
+                self.sg_num_triggers.put(num_frames, wait = False)
                 self.cam.num_images.put(num_frames, wait = False)
         else:
-            self.ext_trigger_num.put(1, wait = False)
+            self.sg_num_triggers.put(1, wait = False)
             if num_frames is not None:
                 self.cam.num_images.put(num_frames, wait = False)
                 
+        # No equivalent AD component, so using only as an alternate to 
+        # caQtDM for setting shutter delay
         if shutter_delay is None:
 #           self.sg_shutter_delay.put(self.cam.shutter_delay.get(), wait = False)
             pass
@@ -147,9 +181,9 @@ class FancyTrigger(TriggerBase):
             self.sg_shutter_delay.put(shutter_delay, wait = False) 
             
         if on_time is None:
-            self.sg_on_time.put(self.cam.exposure_time.get(), wait = False)
+            self.sg_on_time.put(self.cam.acquire_time.get(), wait = False)
         else:
-            self.cam.exposure_time.put(on_time, wait = False)
+            self.cam.acquire_time.put(on_time, wait = False)
             self.sg_on_time.put(on_time, wait = False)
                     
         if period is None:
@@ -220,7 +254,7 @@ class Eiger2DetectorCam_V34(CamMixin_V34, EigerDetectorCam):
 
         self.cam.fw_enable.put("Disable")
         status_wait(
-            SubscriptionStatus(self.cam.fw_state, check_value, timeout=10)
+            SubscriptionStatus(self.hdf1, check_value, timeout=10)
         )
 
 
@@ -228,8 +262,25 @@ class FancyEigerDetector(FancyTrigger, DetectorBase):
     """
     
     """
-    
-    pass
+    def save_hdf1_on(self):
+        def check_value(*, old_value, value, **kwargs):
+            "Return True when file writer is enabled"
+            return value == "Enable"
+
+        self.hdf1.enable.put("Enable")
+        status_wait(
+            SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
+        )
+
+    def save_hdf1_off(self):
+        def check_value(*, old_value, value, **kwargs):
+            "Return True when file writer is disabled"
+            return value == "Disable"
+
+        self.hdf1.enable.put("Disable")
+        status_wait(
+            SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
+        )
     
 
 class BadPixelPlugin(PluginBase):
