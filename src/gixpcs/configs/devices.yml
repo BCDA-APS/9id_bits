@@ -5,21 +5,22 @@ apsbits.utils.sim_creator.predefined_device:
 - {creator: ophyd.sim.noisy_det, name: sim_det_xpcs}
 
 # Motions
-ophyd.EpicsMotor:
-- {name: "aerorot_1",      prefix: "9idAerotech2:R1:m1", labels: ["motors", "baseline"]}
-# TODO Hexapod -- may update later as IOC is expanded
-- {name: "hexapod_1_x",      prefix: "9idAerotech:HP1:m7", labels: ["motors", "baseline"]}
-- {name: "hexapod_1_y",      prefix: "9idAerotech:HP1:m8", labels: ["motors", "baseline"]}
-- {name: "hexapod_1_z",      prefix: "9idAerotech:HP1:m9", labels: ["motors", "baseline"]}
-- {name: "hexapod_1_Ax",     prefix: "9idAerotech:HP1:m10", labels: ["motors", "baseline"]}
-- {name: "hexapod_1_Ay",     prefix: "9idAerotech:HP1:m11", labels: ["motors", "baseline"]}
-- {name: "hexapod_1_Az",     prefix: "9idAerotech:HP1:m12", labels: ["motors", "baseline"]}
-- {name: "hexapod_2_x",      prefix: "9idAerotech2:HP2:m7", labels: ["motors", "baseline"]}
-- {name: "hexapod_2_y",      prefix: "9idAerotech2:HP2:m8", labels: ["motors", "baseline"]}
-- {name: "hexapod_2_z",      prefix: "9idAerotech2:HP2:m9", labels: ["motors", "baseline"]}
-- {name: "hexapod_2_Ax",     prefix: "9idAerotech2:HP2:m10", labels: ["motors", "baseline"]}
-- {name: "hexapod_2_Ay",     prefix: "9idAerotech2:HP2:m11", labels: ["motors", "baseline"]}
-- {name: "hexapod_2_Az",     prefix: "9idAerotech2:HP2:m12", labels: ["motors", "baseline"]}
+#ophyd.EpicsMotor:
+#! Aerotech all moved to devices_xpcs_cssi
+#!- {name: "aerorot_1",      prefix: "9idAerotech2:R1:m1", labels: ["motors", "baseline"]}
+#!# TODO Hexapod -- may update later as IOC is expanded
+#!- {name: "hexapod_1_x",      prefix: "9idAerotech:HP1:m7", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_1_y",      prefix: "9idAerotech:HP1:m8", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_1_z",      prefix: "9idAerotech:HP1:m9", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_1_Ax",     prefix: "9idAerotech:HP1:m10", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_1_Ay",     prefix: "9idAerotech:HP1:m11", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_1_Az",     prefix: "9idAerotech:HP1:m12", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_2_x",      prefix: "9idAerotech2:HP2:m7", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_2_y",      prefix: "9idAerotech2:HP2:m8", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_2_z",      prefix: "9idAerotech2:HP2:m9", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_2_Ax",     prefix: "9idAerotech2:HP2:m10", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_2_Ay",     prefix: "9idAerotech2:HP2:m11", labels: ["motors", "baseline"]}
+#!- {name: "hexapod_2_Az",     prefix: "9idAerotech2:HP2:m12", labels: ["motors", "baseline"]}
 # TDOD QNW sample environment
 # TODO Temperature control
 

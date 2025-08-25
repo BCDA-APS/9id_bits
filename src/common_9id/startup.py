@@ -38,7 +38,7 @@ if iconfig.get("USE_BLUESKY_MAGICS", False):
 # Initialize core components
 bec, peaks = init_bec_peaks(iconfig)
 cat = init_catalog(iconfig)
-RE, sd = init_RE(iconfig, bec_instance=bec, cat_instance=cat)
+RE, sd, re_subscriptions = init_RE(iconfig, bec_instance=bec, cat_instance=cat)
 
 # Import optional components based on configuration
 if iconfig.get("NEXUS_DATA_FILES", {}).get("ENABLE", False):
@@ -78,3 +78,45 @@ else:
 
 #RE(make_devices())
 RE(make_devices(clear=False))
+
+#-----------------------------------------------------------------------
+# Customized tools for 9id
+#
+# -Adding control over BEC 
+# -Adding metadata PVs to own stream
+# -Adding baseline-labeled objects to baseline stream
+#
+#-----------------------------------------------------------------------
+
+# Import callback utilities
+from common_9id.callbacks.utils import *
+
+
+# Record metadata PVs
+if iconfig.get("METADATA_PV", {}).get("ENABLE", False):
+    from common_9id.callbacks.metadataPVs import metadataPV_start_preprocessor
+    logger.info("Adding metadata PVs to own stream")
+    
+    try:
+        RE.preprocessors.append(metadataPV_start_preprocessor)
+    except Exception:
+        logger.warning("Could not load support to log metadata PVs")
+
+# Beamline configuration stored before/after experiment
+# uses baseline label to add to baseline data
+if iconfig.get("BASELINE_LABEL", {}).get("ENABLE", False):
+    logger.info("Adding baseline-labeled objects to baseline stream")
+    try:
+        baseline = oregistry.findall("baseline", allow_none=True) or []
+        for b in baseline:
+            try:
+                b.wait_for_connection()
+                sd.baseline.append(b)
+            except:
+                logger.info("%s not connected and not added to baseline", b.name)
+    except Exception as error:
+        print(
+            "\n"
+            f"Could not create baseline stream for RE. {error=}\n"
+        )
+        logger.warning("Could not add baseline-labeled objects to baseline stream")

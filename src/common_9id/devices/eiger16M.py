@@ -1,5 +1,5 @@
 import logging
-
+import time as ttime
 from apstools.devices.area_detector_support import CamMixin_V34
 from ophyd import Component as Cpt
 from ophyd import FormattedComponent as FCpt
@@ -12,6 +12,7 @@ from ophyd.areadetector.base import EpicsSignalWithRBV as SignalWithRBV
 from ophyd.areadetector.trigger_mixins import TriggerBase, ADTriggerStatus
 from ophyd.status import wait as status_wait, SubscriptionStatus
 from ophyd.areadetector.detectors import DetectorBase
+from ophyd.device import Staged
 
 logger = logging.getLogger(__name__)
 logger.info(__file__)
@@ -29,10 +30,24 @@ class SoftglueTrigger(Device):
     sg_period = FCpt(EpicsSignal, "{_sg_trigger}userTran1.A", labels={"area_detector","trigger"})
     sg_shutter_delay = FCpt(EpicsSignal, "{_sg_trigger}userTran1.E", labels={"area_detector","trigger"})
     sg_num_triggers = FCpt(EpicsSignal, "{_sg_trigger}userTran1.J", labels={"area_detector","trigger"})
-    sg_trigger = FCpt(EpicsSignal, "{_sg_trigger}SG:plsTrn-1_Inp_Signal", labels={"area_detector","trigger"})
+    sg_trigger = FCpt(EpicsSignal, "{_sg_trigger}SG:plsTrn-1_Inp_Signal", labels={"area_detector","trigger"}, string=True)
+    sg_upcntr_1_clear = FCpt(EpicsSignal, "{_sg_trigger}SG:UpCntr-1_CLEAR_Signal", labels={"area_detector","trigger"})
+    sg_upcntr_2_clear = FCpt(EpicsSignal, "{_sg_trigger}SG:UpCntr-2_CLEAR_Signal", labels={"area_detector","trigger"})
+    sg_trigger_disable = FCpt(EpicsSignal, "{_sg_trigger}SG:plsTrn-1_Dis_Signal", labels={"area_detector","trigger"})
 
+class FastShutter(Device):
 
-class FancyTrigger(SoftglueTrigger, TriggerBase):
+    def __init__(self, *args, fastShutterPV = None, image_name=None, **kwargs):
+        if fastShutterPV is None:
+            raise KeyError(f"Must define 'fastShutterPV': {kwargs=!r}")
+        self._fast_shutter = fastShutterPV
+        super().__init__(*args, **kwargs)
+
+    fast_shutter_mode = FCpt(EpicsSignal, "{_fast_shutter}Lock", labels={"area_detector","fast shutter"})
+    fast_shutter_actuate = FCpt(EpicsSignal, "{_fast_shutter}State", labels={"area_detector","fast shutter"})
+
+    
+class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
     """
     TODO: Update to handle Eiger's Multiple Enable w/ + w/o motors along
     with internal series (though Multiple Enable w/o motors may replace
@@ -59,44 +74,87 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
             image_name = "_".join([self.name, "image"])
         self._image_name = image_name
         self._image_count = self.cam.num_images_counter
-        self._ext_mode = 0
+        self._ext_mode = 0 # 0 - count, 1 - motor scan
+        self._mod_frames = 10 
+        
         try:
             comp = getattr(self, 'hdf1')
         except AttributeError:
-            self._hdf_on = False
+            self._hdf_on = "Disable"
         else:
-            self._hdf_on = True
+            self._hdf_on = "Enable"
         
     def stage(self):
-        if self.trigger_mode == 3:          #   External Enable mode
+        super().stage()
+        if self.cam.trigger_mode.get() == 3:          #   External Enable mode
+#            print("staging external enable mode")
+            # Prep shutter
+            # Put in Override
+            self.fast_shutter_mode.put('0', wait=False)
+            ttime.sleep(0.05) 
+            # Open -- doesn't actually open, but puts in proper state 
+            # for SG to open in Override mode
+            self.fast_shutter_actuate.put('0', wait=False) 
+
+            # Clear softglue counters
+            self.sg_upcntr_1_clear.put('1!', wait = False)
+            self.sg_upcntr_2_clear.put('1!', wait = False)
+
             # Set Acquire to 1
             self._acquisition_signal.put(1, wait = False)
-            # TODO what signal to subscribe to check if acquire is complete?
-            self._image_count.subscribe(self._image_count_changed)
-            self._total_images = int(self.sg_num_triggers.get())
+            # Detector needs to be armed before triggers can be sent from the soft glue (SG)
+            while not self.cam.armed.get():
+                ttime.sleep(0.1)
+
+            # Need to set subscription after arming as completed images 
+            # counter isn't updated until armed
+#            self._total_images = int(self.sg_num_triggers.get())
+#            self._image_count.subscribe(self._image_count_changed)
+            
+            # If External Enable set up properly AD will finish Acquire
+            # cleanly and image count needn't be watched
+            self._acquisition_signal.subscribe(self._acquire_changed)
+            
         else:                               #   Presumably in internal series mode
             self._acquisition_signal.subscribe(self._acquire_changed)
+            # Prep shutter
+            self.fast_shutter_mode.put('1', wait=False)
+            self.fast_shutter_actuate.put('0', wait=False)
         
         self._hdf_on = self.hdf1.enable.get()
-        if self._hdf_on:
+        if self._hdf_on == 'Enable':
             self.hdf1.capture.put(1)
         
-        super().stage()
-
+        
+    def abortSGtrigger(self):
+        self.sg_trigger_disable.put("1", wait=False)
+        ttime.sleep(0.05)
+        self.sg_trigger_disable.put("0", wait=False)
+        
 
     def unstage(self):
         super().unstage()
         
-        if self._hdf_on:
+        if self._hdf_on  == 'Enable':
             self.hdf1.capture.put(0)
+
+        self._acquisition_signal.clear_sub(self._acquire_changed)
        
-        if self.trigger_mode == 3:          #   External Enable mode
-            self._image_count.clear_sub(self._image_count_changed)
-        else:                               #   Presumably in internal series mode
-            self._acquisition_signal.clear_sub(self._acquire_changed)
+        if self.cam.trigger_mode.get() == 3:          #   External Enable mode
+            self.fast_shutter_mode.put('1', wait=False)
+            ttime.sleep(0.05)
+            self.fast_shutter_actuate.put('1', wait=False)
+            self.cam.trigger_mode.put('0', wait=False)
+
+        # TODO check if aborted and then run abortSGtrigger
+        self.abortSGtrigger()
+        
 
     def trigger(self):
-        "Trigger one acquisition."
+        '''
+        Trigger one acquisition.
+        '''
+#        print("Trigger called")
         if self._staged != Staged.yes:
             raise RuntimeError(
                 "This detector is not ready to trigger."
@@ -105,7 +163,8 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
 
         self._status = self._status_type(self)
 
-        if self.trigger_mode == 3:          #   External Enable mode
+        if self.cam.trigger_mode.get() == 3:          #   External Enable mode
+#            print("triggering external enable mode")
             self.sg_trigger.put('1!', wait = False)
         else:                               #   Presumably in internal series mode
             self._acquisition_signal.put(1, wait=False)
@@ -114,7 +173,9 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         return self._status
 
     def _acquire_changed(self, value=None, old_value=None, **kwargs):
-        "This is called when the 'acquire' signal changes."
+        '''
+        This is called when the 'acquire' signal changes.
+        '''
         if self._status is None:
             return
         
@@ -124,10 +185,13 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
             self._status = None
                         
     def _image_count_changed(self, value=None, old_value=None, **kwargs):
-        "This is called when the 'acquire' signal changes."
+        '''
+        This is called when the 'acquire' signal changes.
+        '''
         if self._status is None:
             return
-        if value > self._total_images:  # There is a new image!
+#        print(value, old_value, self._total_images)
+        if value >= self._total_images:  # There is a new image!
             self._status.set_finished()
             self._status = None
     
@@ -136,11 +200,13 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         num_frames : int = None, 
         shutter_delay : float = None,
         on_time : float = None,
-        period : float = None
+        period : float = None,
+        mod_frames : int = 10
         ):
             
         '''
-        Set up softglue for triggering eiger 
+        Set up softglue for triggering eiger and sets eiger for 
+        external triggers (External Enable)
         
         Parameters
         ==========
@@ -163,18 +229,26 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         Acquire period (>= exposure time) in seconds.  If not set, will get
         from AD Acquire Period
 
+        mod_frames : int = 10, 
+        For external enable mode and count plans, how often bluesky data is read in
+
         ''' 
-    
+        self.cam.trigger_mode.put("3", wait = True)
         if count:
+            self._ext_mode = 0
+            self._mod_frames = mod_frames
             if num_frames is None:
-                self.sg_num_triggers.put(self.cam.num_images.get(), wait = False)
+                num_frames = self.cam.num_images.get()
             else:
-                self.sg_num_triggers.put(num_frames, wait = False)
-                self.cam.num_images.put(num_frames, wait = False)
+                self.cam.num_images.put(num_frames, wait = True)
+            self.sg_num_triggers.put(num_frames, wait = False)
+            self.cam.num_triggers.put(num_frames, wait = True)
         else:
+            self._ext_mode = 1
             self.sg_num_triggers.put(1, wait = False)
+            self.cam.num_triggers.put(1 , wait = True)
             if num_frames is not None:
-                self.cam.num_images.put(num_frames, wait = False)
+                self.cam.num_images.put(num_frames, wait = True)
                 
         # No equivalent AD component, so using only as an alternate to 
         # caQtDM for setting shutter delay
@@ -188,13 +262,13 @@ class FancyTrigger(SoftglueTrigger, TriggerBase):
         if on_time is None:
             self.sg_on_time.put(self.cam.acquire_time.get(), wait = False)
         else:
-            self.cam.acquire_time.put(on_time, wait = False)
+            self.cam.acquire_time.put(on_time, wait = True)
             self.sg_on_time.put(on_time, wait = False)
                     
         if period is None:
             self.sg_period.put(self.cam.acquire_period.get(), wait = False)
         else:
-            self.cam.acquire_period.put(period, wait = False)
+            self.cam.acquire_period.put(period, wait = True)
             self.sg_period.put(period, wait = False)
           
 
@@ -244,23 +318,29 @@ class Eiger2DetectorCam_V34(CamMixin_V34, EigerDetectorCam):
 
     def save_images_on(self):
         def check_value(*, old_value, value, **kwargs):
-            "Return True when file writer is enabled"
+            '''
+            Return True when file writer is enabled
+            '''
             return value == "ready"
 
-        self.cam.fw_enable.put("Enable")
-        status_wait(
-            SubscriptionStatus(self.cam.fw_state, check_value, timeout=10)
-        )
+        if self.cam.fw_enable.get() != 1:
+            self.cam.fw_enable.put("Enable")
+            status_wait(
+                SubscriptionStatus(self.cam.fw_state, check_value, timeout=10)
+            )
 
     def save_images_off(self):
         def check_value(*, old_value, value, **kwargs):
-            "Return True when file writer is disabled"
+            '''
+            Return True when file writer is disabled
+            '''
             return value == "disabled"
 
-        self.cam.fw_enable.put("Disable")
-        status_wait(
-            SubscriptionStatus(self.hdf1, check_value, timeout=10)
-        )
+        if self.cam.fw_enable.get() != 0:
+            self.cam.fw_enable.put("Disable")
+            status_wait(
+                SubscriptionStatus(self.hdf1, check_value, timeout=10)
+            )
 
 
 class FancyEigerDetector(FancyTrigger, DetectorBase):
@@ -269,23 +349,29 @@ class FancyEigerDetector(FancyTrigger, DetectorBase):
     """
     def save_hdf1_on(self):
         def check_value(*, old_value, value, **kwargs):
-            "Return True when file writer is enabled"
+            '''
+            Return True when hdf1 is enabled"
+            '''
             return value == "Enable"
 
-        self.hdf1.enable.put("Enable")
-        status_wait(
-            SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
-        )
+        if self.hdf1.enable.get() != "Enable":
+            self.hdf1.enable.put("Enable")
+            status_wait(
+                SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
+            )
 
     def save_hdf1_off(self):
         def check_value(*, old_value, value, **kwargs):
-            "Return True when file writer is disabled"
+            '''
+            Return True when hdf1 is disabled"
+            '''
             return value == "Disable"
 
-        self.hdf1.enable.put("Disable")
-        status_wait(
-            SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
-        )
+        if self.hdf1.enable.get() != "Disable":
+            self.hdf1.enable.put("Disable")
+            status_wait(
+                SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
+            )
     
 
 class BadPixelPlugin(PluginBase):

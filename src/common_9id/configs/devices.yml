@@ -12,9 +12,11 @@ apstools.devices.aps_undulator.PlanarUndulator:
 - name: undulator
   prefix: "S09ID:DSID:"
 
-common_9id.devices.fastShutter:
-- name: fastShutter
-  prefix: "9idd:fastshutter:"
+# incorporated into eiger16m -- will have to rethink if to be used with
+# other devices
+#common_9id.devices.fastShutter:
+#- name: fastShutter
+#  prefix: "9idd:fastshutter:"
   
 # ophyd.Signal:
 # - name: test
@@ -234,6 +236,7 @@ apstools.devices.ad_creator:
     labels: ["area_detector", "detectors"]
     bases: !!python/name:common_9id.devices.FancyEigerDetector
     sg_trigger: "9iddMZds:"
+    fastShutterPV: "9idd:fastshutter:"
     plugins:
       - cam:
           class: common_9id.devices.Eiger2DetectorCam_V34

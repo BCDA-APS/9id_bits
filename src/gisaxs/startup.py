@@ -38,7 +38,7 @@ if iconfig.get("USE_BLUESKY_MAGICS", False):
 # Initialize core components
 bec, peaks = init_bec_peaks(iconfig)
 cat = init_catalog(iconfig)
-RE, sd = init_RE(iconfig, bec_instance=bec, cat_instance=cat)
+RE, sd, re_subscriptions = init_RE(iconfig, bec_instance=bec, cat_instance=cat)
 
 # Import optional components based on configuration
 if iconfig.get("NEXUS_DATA_FILES", {}).get("ENABLE", False):
@@ -77,10 +77,17 @@ RE(make_devices(clear=False))
 #-----------------------------------------------------------------------
 # Customized tools for 9id
 #
+# -Adding control over BEC 
 # -Adding metadata PVs to own stream
 # -Adding baseline-labeled objects to baseline stream
 #
 #-----------------------------------------------------------------------
+
+# Import callback utilities
+from common_9id.callbacks.utils import *
+
+# Import common 9id plans
+from common_9id.plans import *
 
 # Record metadata PVs
 if iconfig.get("METADATA_PV", {}).get("ENABLE", False):
@@ -110,3 +117,9 @@ if iconfig.get("BASELINE_LABEL", {}).get("ENABLE", False):
             f"Could not create baseline stream for RE. {error=}\n"
         )
         logger.warning("Could not add baseline-labeled objects to baseline stream")
+
+#-----------------------------------------------------------------------
+# Customized tools for 9id GI-SAXS
+#
+#
+#-----------------------------------------------------------------------
