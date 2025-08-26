@@ -39,7 +39,7 @@ def unsubscribe_bec(RE, subscriptions):
     
 
 
-def subscribe_bec(RE, subscriptions):
+def subscribe_bec(RE, subscriptions, bec):
     """
     (Re)subscribing BEC and updating subscriptions dictionary
 
@@ -47,7 +47,7 @@ def subscribe_bec(RE, subscriptions):
 
     RE: run engine instance in use
     re_subscriptions: dictionary of RE subscriptions
-
+    bec: bluesky.callback.best_effort.BestEffortCallback
 
     Returns: 
     updated subscription dictionary

@@ -73,9 +73,11 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         if image_name is None:
             image_name = "_".join([self.name, "image"])
         self._image_name = image_name
+        self._array_count = self.cam.array_counter
         self._image_count = self.cam.num_images_counter
         self._ext_mode = 0 # 0 - count, 1 - motor scan
         self._mod_frames = 10 
+        self._delta = 0
         
         try:
             comp = getattr(self, 'hdf1')
@@ -87,7 +89,6 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
     def stage(self):
         super().stage()
         if self.cam.trigger_mode.get() == 3:          #   External Enable mode
-#            print("staging external enable mode")
             # Prep shutter
             # Put in Override
             self.fast_shutter_mode.put('0', wait=False)
@@ -101,20 +102,12 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             self.sg_upcntr_2_clear.put('1!', wait = False)
 
             # Set Acquire to 1
-            self._acquisition_signal.put(1, wait = False)
-            # Detector needs to be armed before triggers can be sent from the soft glue (SG)
-            while not self.cam.armed.get():
-                ttime.sleep(0.1)
+            self._acquisition_signal.put(1, wait = True)
 
-            # Need to set subscription after arming as completed images 
-            # counter isn't updated until armed
-#            self._total_images = int(self.sg_num_triggers.get())
-#            self._image_count.subscribe(self._image_count_changed)
-            
-            # If External Enable set up properly AD will finish Acquire
-            # cleanly and image count needn't be watched
-            self._acquisition_signal.subscribe(self._acquire_changed)
-            
+            if self._ext_mode == 0:
+                self._acquisition_signal.subscribe(self._acquire_changed)
+            else:
+                self._array_count.subscribe(self._count_changed)
         else:                               #   Presumably in internal series mode
             self._acquisition_signal.subscribe(self._acquire_changed)
             # Prep shutter
@@ -133,8 +126,11 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         
 
     def unstage(self):
-        super().unstage()
+        while self.cam.acquire_busy.get():
+            ttime.sleep(0.05)
         
+        super().unstage()
+               
         if self._hdf_on  == 'Enable':
             self.hdf1.capture.put(0)
 
@@ -145,8 +141,9 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             ttime.sleep(0.05)
             self.fast_shutter_actuate.put('1', wait=False)
             self.cam.trigger_mode.put('0', wait=False)
-
-        # TODO check if aborted and then run abortSGtrigger
+            if self._ext_mode == 1:
+                self._array_count.clear_sub(self._count_changed)
+ #               self._image_count.clear_sub(self._count_changed)
         self.abortSGtrigger()
         
 
@@ -154,7 +151,6 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         '''
         Trigger one acquisition.
         '''
-#        print("Trigger called")
         if self._staged != Staged.yes:
             raise RuntimeError(
                 "This detector is not ready to trigger."
@@ -164,11 +160,9 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         self._status = self._status_type(self)
 
         if self.cam.trigger_mode.get() == 3:          #   External Enable mode
-#            print("triggering external enable mode")
             self.sg_trigger.put('1!', wait = False)
         else:                               #   Presumably in internal series mode
             self._acquisition_signal.put(1, wait=False)
-
         self.generate_datum(self._image_name, ttime.time(), {})
         return self._status
 
@@ -184,19 +178,18 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             self._status.set_finished()
             self._status = None
                         
-    def _image_count_changed(self, value=None, old_value=None, **kwargs):
+    def _count_changed(self, value=None, old_value=None, **kwargs):
         '''
-        This is called when the 'acquire' signal changes.
+        This is called when the image or array counter signal changes.
         '''
         if self._status is None:
             return
-#        print(value, old_value, self._total_images)
-        if value >= self._total_images:  # There is a new image!
+        if value > old_value:  # There is a new image!
             self._status.set_finished()
             self._status = None
     
     def prime_sg(self, 
-        count : bool = True, 
+        count : bool = False, 
         num_frames : int = None, 
         shutter_delay : float = None,
         on_time : float = None,
@@ -211,7 +204,7 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         Parameters
         ==========
 
-        count : bool = True
+        count : bool = False
         set to true if count plan to be run otherwise set to false 
         
         num_frames : int = None, 
@@ -234,22 +227,22 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
 
         ''' 
         self.cam.trigger_mode.put("3", wait = True)
+
+        if num_frames is None:
+            num_frames = self.cam.num_images.get()
+        else:
+            self.cam.num_images.put(num_frames, wait = True)
+        self.cam.num_triggers.put(num_frames , wait = True)
+
         if count:
             self._ext_mode = 0
             self._mod_frames = mod_frames
-            if num_frames is None:
-                num_frames = self.cam.num_images.get()
-            else:
-                self.cam.num_images.put(num_frames, wait = True)
             self.sg_num_triggers.put(num_frames, wait = False)
-            self.cam.num_triggers.put(num_frames, wait = True)
         else:
             self._ext_mode = 1
             self.sg_num_triggers.put(1, wait = False)
-            self.cam.num_triggers.put(1 , wait = True)
-            if num_frames is not None:
-                self.cam.num_images.put(num_frames, wait = True)
-                
+        
+                 
         # No equivalent AD component, so using only as an alternate to 
         # caQtDM for setting shutter delay
         if shutter_delay is None:
@@ -259,18 +252,23 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
 #           self.sg_shutter_delay.put(shutter_delay, wait = False) 
             self.sg_shutter_delay.put(shutter_delay, wait = False) 
             
-        if on_time is None:
-            self.sg_on_time.put(self.cam.acquire_time.get(), wait = False)
-        else:
-            self.cam.acquire_time.put(on_time, wait = True)
-            self.sg_on_time.put(on_time, wait = False)
+        if on_time is None:  
+            on_time = self.cam.acquire_time.get()
+        self.cam.acquire_time.put(on_time, wait = True)
+        self.sg_on_time.put(on_time, wait = False)
+        
                     
         if period is None:
-            self.sg_period.put(self.cam.acquire_period.get(), wait = False)
-        else:
+            period = self.cam.acquire_period.get()
+        if self._ext_mode == 0:
             self.cam.acquire_period.put(period, wait = True)
-            self.sg_period.put(period, wait = False)
-          
+            self.sg_period.put(period, wait = False)    
+        else:
+            # Acquire period not necessary(?) for scans. Also, when period
+            # is significantly longer than the exposure period (on_time)
+            # then subsequent triggers are missed.
+            self.cam.acquire_period.put(on_time, wait = True)
+            self.sg_period.put(on_time, wait = False)          
 
 class EigerDetectorCam_V34(CamMixin_V34, EigerDetectorCam):
     """Adds triggering configuration and AcquireBusy support."""
