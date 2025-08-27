@@ -3,6 +3,8 @@ from ophyd import ADComponent
 from ophyd.areadetector import PilatusDetectorCam
 from ophyd import EpicsSignal
 
+from common_9id.devices.fancyTriggers import FancyDetector
+
 class PilatusDetectorCam_V34(CamMixin_V34, PilatusDetectorCam):
     """Adds triggering configuration and AcquireBusy support."""
 
@@ -12,3 +14,9 @@ class PilatusDetectorCam_V34(CamMixin_V34, PilatusDetectorCam):
         kind="omitted",
         string=True,
     )
+
+class FancyPilatusDetector(FancyDetector):
+    """
+    
+    """
+    pass
