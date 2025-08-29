@@ -17,63 +17,67 @@ apstools.devices.ad_creator:
   - name: pilatus1m
     prefix: "PILATUS_1MF:"
     labels: ["area_detector", "detectors"]
+    bases: !!python/name:giwaxs.devices.FancyPilatusDetector
+    sg_trigger: "9iddMZds:"
+    fastShutterPV: "9idd:fastshutter:"
+    ext_trig_mode: "2"
     plugins:
       - cam:
           class: giwaxs.devices.PilatusDetectorCam_V34
       - image
       - pva
-#      - cc1
-#      - cc2
-#      - overlay1
+      - cc1
+      - cc2
+      - overlay1
       - roi1
-#      - roi2
-#      - roi3
-#      - roi4
+      - roi2
+      - roi3
+      - roi4
       - stats1
-#      - stats2
-#      - stats3
-#      - stats4
-#      - stats5
-#      - scatter1
-#      - gather1: 
-#          class: ophyd.areadetector.plugins.GatherPlugin
-#          suffix: "Gather1:"
-#      - gather11: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "1"
-#      - gather12: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "2"
-#      - gather13: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "3"
-#      - gather14: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "4"
-#      - gather15: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "6"
-#      - gather17: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "7"
-#      - gather18: 
-#          class: ophyd.areadetector.plugins.GatherNPlugin_V31
-#          suffix: "Gather1:"
-#          index: "8"
-#      - roistat1
-#      - cb1
-#      - attr1
-#      - fft1
-#      - codec1
-#      - codec2:
-#          class: ophyd.areadetector.plugins.CodecPlugin_V34
-#          suffix: "Codec2:"
+      - stats2
+      - stats3
+      - stats4
+      - stats5
+      - scatter1
+      - gather1: 
+          class: ophyd.areadetector.plugins.GatherPlugin
+          suffix: "Gather1:"
+      - gather11: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "1"
+      - gather12: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "2"
+      - gather13: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "3"
+      - gather14: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "4"
+      - gather15: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "6"
+      - gather17: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "7"
+      - gather18: 
+          class: ophyd.areadetector.plugins.GatherNPlugin_V31
+          suffix: "Gather1:"
+          index: "8"
+      - roistat1
+      - cb1
+      - attr1
+      - fft1
+      - codec1
+      - codec2:
+          class: ophyd.areadetector.plugins.CodecPlugin_V34
+          suffix: "Codec2:"
       - hdf1:
           class: apstools.devices.AD_EpicsFileNameHDF5Plugin
           read_path_template: "/path/to/bluesky/tmp/"

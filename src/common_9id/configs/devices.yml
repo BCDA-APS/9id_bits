@@ -237,6 +237,7 @@ apstools.devices.ad_creator:
     bases: !!python/name:common_9id.devices.FancyEigerDetector
     sg_trigger: "9iddMZds:"
     fastShutterPV: "9idd:fastshutter:"
+    ext_trig_mode: "3"
     plugins:
       - cam:
           class: common_9id.devices.Eiger2DetectorCam_V34

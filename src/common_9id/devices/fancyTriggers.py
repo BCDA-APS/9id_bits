@@ -30,6 +30,8 @@ class SoftglueTrigger(Device):
     sg_upcntr_1_clear = FCpt(EpicsSignal, "{_sg_trigger}SG:UpCntr-1_CLEAR_Signal", labels={"area_detector","trigger"})
     sg_upcntr_2_clear = FCpt(EpicsSignal, "{_sg_trigger}SG:UpCntr-2_CLEAR_Signal", labels={"area_detector","trigger"})
     sg_trigger_disable = FCpt(EpicsSignal, "{_sg_trigger}SG:plsTrn-1_Dis_Signal", labels={"area_detector","trigger"})
+    sg_upcntr_1_counts = FCpt(EpicsSignalRO, "{_sg_trigger}SG:UpCntr-1_COUNTS", labels={"area_detector","trigger"})
+    sg_upcntr_2_counts = FCpt(EpicsSignalRO, "{_sg_trigger}SG:UpCntr-2_COUNTS", labels={"area_detector","trigger"})
 
 class FastShutter(Device):
 
@@ -72,6 +74,7 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         self._array_count = self.cam.array_counter
         self._image_count = self.cam.num_images_counter
         self._ext_mode = 0 # 0 - count, 1 - motor scan
+        self._num_frames = 0
         self._mod_frames = 10 
         self._delta = 0
         
@@ -84,7 +87,7 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         
     def stage(self):
         super().stage()
-        if self.cam.trigger_mode.get() == 3:          #   External Enable mode
+        if self.cam.trigger_mode.get() == self._ext_trig_mode:          #   External Enable mode
             # Prep shutter
             # Put in Override
             self.fast_shutter_mode.put('0', wait=False)
@@ -96,10 +99,22 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             # Clear softglue counters
             self.sg_upcntr_1_clear.put('1!', wait = False)
             self.sg_upcntr_2_clear.put('1!', wait = False)
+            # Clear AD array counter
+            self.cam.array_counter.put(0)
 
+            # Record counters for possible error checking
+            self._original_read_attrs = self.read_attrs
+            self.read_attrs = list(self.read_attrs) + ['sg_upcntr_2_counts', 'cam.array_counter']
+            
             # Set Acquire to 1
             self._acquisition_signal.put(1, wait = True)
 
+            # Get number of frames
+            if self._trigger_control:               
+                self._num_frames = self.cam.num_triggers.get()
+            else:
+                self._num_frames = self.cam.num_images.get()
+                
             if self._ext_mode == 0:
                 self._acquisition_signal.subscribe(self._acquire_changed)
             else:
@@ -112,6 +127,7 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         
         self._hdf_on = self.hdf1.enable.get()
         if self._hdf_on == 'Enable':
+            self.hdf1.num_capture.put(self._num_frames)
             self.hdf1.capture.put(1)
         
         
@@ -124,15 +140,13 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
     def unstage(self):
         while self.cam.acquire_busy.get():
             ttime.sleep(0.05)
-        
-        super().unstage()
-               
+                       
         if self._hdf_on  == 'Enable':
             self.hdf1.capture.put(0)
 
         self._acquisition_signal.clear_sub(self._acquire_changed)
        
-        if self.cam.trigger_mode.get() == 3:          #   External Enable mode
+        if self.cam.trigger_mode.get() == self._ext_trig_mode:          #   External Enable mode
             self.fast_shutter_mode.put('1', wait=False)
             ttime.sleep(0.05)
             self.fast_shutter_actuate.put('1', wait=False)
@@ -141,6 +155,10 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
                 self._array_count.clear_sub(self._count_changed)
  #               self._image_count.clear_sub(self._count_changed)
         self.abortSGtrigger()
+        
+        self.read_attrs = self._original_read_attrs
+        
+        super().unstage()
         
 
     def trigger(self):
@@ -155,7 +173,7 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
 
         self._status = self._status_type(self)
 
-        if self.cam.trigger_mode.get() == 3:          #   External Enable mode
+        if self.cam.trigger_mode.get() == self._ext_trig_mode:          #   External Enable mode
             self.sg_trigger.put('1!', wait = False)
         else:                               #   Presumably in internal series mode
             self._acquisition_signal.put(1, wait=False)
@@ -222,18 +240,20 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
         For external enable mode and count plans, how often bluesky data is read in
 
         ''' 
-        self.cam.trigger_mode.put("3", wait = True)
+        self.cam.trigger_mode.put(self._ext_trig_mode, wait = True)
 
         if num_frames is None:
-            num_frames = self.cam.num_images.get()
+            self._num_frames = self.cam.num_images.get()
         else:
-            self.cam.num_images.put(num_frames, wait = True)
-        self.cam.num_triggers.put(num_frames , wait = True)
+            self._num_frames = num_frames
+            self.cam.num_images.put(self._num_frames, wait = True)
+        if self._trigger_control:               
+            self.cam.num_triggers.put(self._num_frames, wait = True)
 
         if count:
             self._ext_mode = 0
             self._mod_frames = mod_frames
-            self.sg_num_triggers.put(num_frames, wait = False)
+            self.sg_num_triggers.put(self._num_frames, wait = False)
         else:
             self._ext_mode = 1
             self.sg_num_triggers.put(1, wait = False)
@@ -260,16 +280,35 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             self.cam.acquire_period.put(period, wait = True)
             self.sg_period.put(period, wait = False)    
         else:
-            # Acquire period not necessary(?) for scans. Also, when period
+            # Acquire period not necessary(?) for Eiger scans. Pilatus 
+            # scans need Acquire Period > Acquire Time.Also, when period
             # is significantly longer than the exposure period (on_time)
             # then subsequent triggers are missed.
-            self.cam.acquire_period.put(on_time, wait = True)
-            self.sg_period.put(on_time, wait = False)          
+            if self._ext_trig_mode == 3: # Eiger
+                self.cam.acquire_period.put(on_time, wait = True)
+                self.sg_period.put(on_time, wait = False)          
+            else:                       # Pilatus
+                self.cam.acquire_period.put(on_time+0.01, wait = True)
+                self.sg_period.put(on_time+0.01, wait = False)          
 
 class FancyDetector(FancyTrigger, DetectorBase):
     """
     
     """
+    def __init__(self, *args, ext_trig_mode=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        if ext_trig_mode is None:
+            print(f'FancyDetector external trigger mode not declared, defaulting to 1')
+            self._ext_trig_mode = 1
+        else:
+            self._ext_trig_mode = int(ext_trig_mode)
+            
+        if self._ext_trig_mode == 3: # Eiger case
+            self._trigger_control = True
+        else:
+            self._trigger_control = False
+        
     def save_hdf1_on(self, 
                     fname : str = None, 
                     fnumber : int = None, 

@@ -2,10 +2,6 @@
 
 # Guarneri-style device YAML configuration
 
-apsbits.utils.sim_creator.predefined_device:
-- {creator: ophyd.sim.motor, name: sim_motor_xs}
-- {creator: ophyd.sim.noisy_det, name: sim_det_xs}
-
 common_9id.devices.AcsMotor:
 # Grand Tube motors
 - {name: "carriage_hor_bs_y",   prefix: "9idGT:m1", labels: ["motor", "baseline"]}

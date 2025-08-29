@@ -37,9 +37,9 @@ USE_BLUESKY_MAGICS: true
 ### Defaults: all true
 ### except no plots in queueserver
 BEC:
-    BASELINE: true
+    BASELINE: false
     HEADING: true
-    PLOTS: true
+    PLOTS: false
     TABLE: true
 
 ### Support for known output file formats.

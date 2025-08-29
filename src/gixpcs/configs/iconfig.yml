@@ -37,7 +37,7 @@ USE_BLUESKY_MAGICS: true
 ### Defaults: all true
 ### except no plots in queueserver
 BEC:
-    BASELINE: true
+    BASELINE: false
     HEADING: true
     PLOTS: false
     TABLE: true
@@ -62,7 +62,7 @@ DEVICES_FILES:
 - devices.yml
 - devices_common.yml
 - devices_xpcs_saxs.yml
-- devices_xpcs_cssi.yml
+#- devices_xpcs_cssi.yml
 
 APS_DEVICES_FILES:
 - devices_aps_only.yml
