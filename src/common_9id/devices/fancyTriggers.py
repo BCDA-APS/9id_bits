@@ -154,9 +154,8 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             if self._ext_mode == 1:
                 self._array_count.clear_sub(self._count_changed)
  #               self._image_count.clear_sub(self._count_changed)
+            self.read_attrs = self._original_read_attrs
         self.abortSGtrigger()
-        
-        self.read_attrs = self._original_read_attrs
         
         super().unstage()
         

@@ -14,3 +14,4 @@ from .kohzu_mono_fixedMode import KohzuSeqCtl_Mono_FixedMode
 # from .registers import EpicsPvStorageRegisters
 from .adplugin_support import *
 from .fastShutter import fastShutter
+from .aerotech_hexapod import aerotechHexapod
