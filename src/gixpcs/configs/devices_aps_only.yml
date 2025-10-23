@@ -1,6 +1,1 @@
-# Guarneri-style device YAML configuration
-
-# Objects only available at APS
-
-apstools.devices.ApsMachineParametersDevice:
-  - name: aps
+../../common_9id/configs/devices_aps_only.yml

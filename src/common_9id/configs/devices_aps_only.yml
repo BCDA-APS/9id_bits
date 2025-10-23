@@ -2,5 +2,6 @@
 
 # Objects only available at APS
 
-apstools.devices.ApsMachineParametersDevice:
+#apstools.devices.ApsMachineParametersDevice:
+common_9id.devices.patched_aps.PatchedApsMachineParametersDevice:
   - name: aps

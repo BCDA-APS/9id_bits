@@ -156,7 +156,7 @@ def edge_align_ad(detectors, mover, start, end, points, adplugin = {"stats_n" : 
         initial_guess = guess_erf_params(x, y)
         popt, pcov = curve_fit(erf_model, x, y, p0=initial_guess)
         if pcov[3, 3] != np.inf:
-            print("Significant signal change detected; motor moving to detected edge.")
+            print(f"Significant signal change detected; motor moving to detected edge at {popt[3]}.")
             yield from bps.mv(mover, popt[3])
         else:
             raise Exception

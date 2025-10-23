@@ -321,3 +321,13 @@ apstools.devices.ad_creator:
 #           write_path_template: "/path/to/ioc/tmp/"
 #       - roi1
 #       - stats1
+
+# OMEGA MFC -- uses asyn record for direct communication
+# Not added to baseline as I don't know if it can take a reading properly
+# Need to update to prefix to correspond to correct asyn port/moxa
+#!common_9id.devices.omegaMFCasyn:
+#!- name: omega_MFC
+#!  prefix: "9idd:asyn_11"
+#!  
+#!  labels: ["mfc"]
+

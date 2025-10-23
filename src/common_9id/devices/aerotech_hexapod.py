@@ -122,12 +122,13 @@ class aerotechHexapod(Device):
         # Set work coordinates
         self.set_work_coordinates(x, y ,z, a, b, c)
         
-        # Enable Tool
-        self.enable_tool()
-
+ 
         # Set tool coordinates
         self.set_tool_coordinates(x_offset, y_offset, z_offset, 
                                   a_offset, b_offset, c_offset)
 
         # activate tool
         self.activate()
+
+       # Enable Tool
+        self.enable_tool()

@@ -21,20 +21,10 @@ common_9id.devices.AcsMotor:
 - {name: "gixs_v_sam_y", prefix: "9idd:CR9D4M1:m12", labels: ["motor", "baseline"]}
 - {name: "gixs_v_phi_c", prefix: "9idd:CR9D4M1:m13", labels: ["motor", "baseline"]}
 
-# apstools.devices.ad_creator:
-#   - name: adsimdet
-#     prefix: "ad:"
-#     labels: ["area_detector", "detectors"]
-#     plugins:
-#       - cam:
-#           class: apstools.devices.SimDetectorCam_V34
-#       - image
-#       - pva
-#       - hdf1:
-#           class: apstools.devices.AD_EpicsFileNameHDF5Plugin
-#           read_path_template: "/path/to/bluesky/tmp/"
-#           write_path_template: "/path/to/ioc/tmp/"
-#       - roi1
-#       - stats1
+# Linkam T96 temperature controller
+apstools.devices.Linkam_T96_Device:
+  - name: linkam
+    prefix: "8idlinkam:tc1:"
+    labels: ["temperature"]
 
 # TODO Robot support
