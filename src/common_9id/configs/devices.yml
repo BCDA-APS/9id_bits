@@ -238,6 +238,7 @@ apstools.devices.ad_creator:
     sg_trigger: "9iddMZds:"
     fastShutterPV: "9idd:fastshutter:"
     ext_trig_mode: "3"
+    eigerBool: "True"
     plugins:
       - cam:
           class: common_9id.devices.Eiger2DetectorCam_V34
@@ -326,8 +327,9 @@ apstools.devices.ad_creator:
 # Not added to baseline as I don't know if it can take a reading properly
 # Need to update to prefix to correspond to correct asyn port/moxa
 #!common_9id.devices.omegaMFCasyn:
-#!- name: omega_MFC
-#!  prefix: "9idd:asyn_11"
-#!  
-#!  labels: ["mfc"]
-
+#!    - name: omega_MFC_1
+#!      prefix: "9idd:asyn_5"
+#!      labels: ["mfc"]
+#!    - name: omega_MFC_2
+#!      prefix: "9idd:asyn_6"
+#!      labels: ["mfc"]

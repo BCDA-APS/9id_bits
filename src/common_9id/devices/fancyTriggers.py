@@ -283,7 +283,7 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             # scans need Acquire Period > Acquire Time.Also, when period
             # is significantly longer than the exposure period (on_time)
             # then subsequent triggers are missed.
-            if self._ext_trig_mode == 3: # Eiger
+            if self._trigger_control: # Eiger
                 self.cam.acquire_period.put(on_time, wait = True)
                 self.sg_period.put(on_time, wait = False)          
             else:                       # Pilatus
@@ -294,7 +294,7 @@ class FancyDetector(FancyTrigger, DetectorBase):
     """
     
     """
-    def __init__(self, *args, ext_trig_mode=None, **kwargs):
+    def __init__(self, *args, ext_trig_mode=None, eigerBool = False, **kwargs):
         super().__init__(*args, **kwargs)
         
         if ext_trig_mode is None:
@@ -303,7 +303,7 @@ class FancyDetector(FancyTrigger, DetectorBase):
         else:
             self._ext_trig_mode = int(ext_trig_mode)
             
-        if self._ext_trig_mode == 3: # Eiger case
+        if eigerBool: # Eiger case
             self._trigger_control = True
         else:
             self._trigger_control = False

@@ -16,3 +16,4 @@ from .adplugin_support import *
 from .fastShutter import fastShutter
 from .aerotech_hexapod import aerotechHexapod
 from .patched_aps import *
+# from .omega_mfc import omegaMFCasyn

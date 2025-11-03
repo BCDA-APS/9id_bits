@@ -20,7 +20,7 @@ apstools.devices.ad_creator:
     bases: !!python/name:giwaxs.devices.FancyPilatusDetector
     sg_trigger: "9iddMZds:"
     fastShutterPV: "9idd:fastshutter:"
-    ext_trig_mode: "2"
+    ext_trig_mode: "3"
     plugins:
       - cam:
           class: giwaxs.devices.PilatusDetectorCam_V34
