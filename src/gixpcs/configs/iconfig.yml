@@ -62,6 +62,7 @@ DEVICES_FILES:
 - devices.yml
 - devices_common.yml
 - devices_xpcs_saxs.yml
+- devices_eiger.yml
 #- devices_xpcs_cssi.yml
 
 APS_DEVICES_FILES:

@@ -63,6 +63,8 @@ DEVICES_FILES:
 - devices_common.yml
 - devices_waxs_saxs.yml
 - devices_xpcs_saxs.yml
+- devices_eiger.yml
+
 APS_DEVICES_FILES:
 - devices_aps_only.yml
 

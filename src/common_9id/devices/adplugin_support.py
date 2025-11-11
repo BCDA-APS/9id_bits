@@ -5,9 +5,12 @@ EPICS area_detector helpers
 __all__ = """
     prepare_ROI
     prepare_STATS
+    restage_plugins
 """.split()
 
 import bluesky.plan_stubs as bps
+
+
 
 def prepare_ROI(detector, ROI_num = 1):
     name = 'roi'+str(ROI_num)
@@ -59,3 +62,29 @@ def prepare_STATS(detector,
     # Enable
     comp.enable.set('Enable')
     print(f"{name} prepped")
+
+
+def restage_plugins(det, all_nonblocking = True):
+    """
+    by defualt all AD plugins are set to enable on staging and for blocking.
+    
+    restage_plugins checks which plugins are enabled and sets all disabled
+    plugins to be disabled on stage (i.e. not re-enabled)
+    """
+    for name, obj in det._sig_attrs.items():
+        if obj.is_device:
+            comp = getattr(det, name)
+            try:
+                enabled = comp.enable.get()
+                blocked = comp.blocking_callbacks.get()
+            except:
+                continue
+            else:
+                if enabled == 'Disable':
+                    print(f"{name} is set to disable on staging")
+                    comp.disable_on_stage()
+                    comp.ensure_nonblocking()   
+                elif all_nonblocking:
+                    print(f"{name} is set to enable on staging")
+                    comp.ensure_nonblocking()
+            

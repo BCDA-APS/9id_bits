@@ -335,6 +335,7 @@ class FancyDetector(FancyTrigger, DetectorBase):
             status_wait(
                 SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
             )
+        self.hdf1.enable_on_stage()
 
     def save_hdf1_off(self):
         def check_value(*, old_value, value, **kwargs):
@@ -348,5 +349,7 @@ class FancyDetector(FancyTrigger, DetectorBase):
             status_wait(
                 SubscriptionStatus(self.hdf1.enable, check_value, timeout=10)
             )
+        self.hdf1.disable_on_stage()
+
 
     
