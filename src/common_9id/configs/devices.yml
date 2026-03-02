@@ -8,6 +8,23 @@ apstools.devices.SimulatedApsPssShutterWithStatus:
 - name: shutter
   labels: ["shutters"]
 
+#apstools.devices.SimulatedApsPssShutterWithStatus:
+#- name: sim_shutter
+#  labels: ["shutters"]
+
+#Untested
+#apstools.devices.ApsPssShutterWithStatus:
+#- name: A_shutter
+#  open_pv: "S09ID-PSS:FES:OpenEPICSC"
+#  close_pv:  "S09ID-PSS:FES:CloseEPICSC"
+#  status_pv: "9ID:BLEPS:FES_CLOSED"
+#  labels: ["shutters"]
+#- name: D_shutter
+#  open_pv: "S09ID-PSS:SDS:OpenEPICSC"
+#  close_pv:  "S09ID-PSS:SDS:CloseEPICSC"
+#  status_pv: "9ID:BLEPS:SDS_CLOSED"
+#  labels: ["shutters"]
+
 apstools.devices.aps_undulator.PlanarUndulator:
 - name: undulator
   prefix: "S09ID:DSID:"
@@ -23,6 +40,16 @@ apstools.devices.aps_undulator.PlanarUndulator:
 #   value: 50.7
 # - name: t2
 #   value: 2
+
+# White beam ready calculation
+#!common_9id.devices.WhiteBeamReadyCalc:
+#!- name: wbReady
+#!  prefix: "9ida:userCalc10"
+#!  #CALC_PV = "9idcLAX:userCalc9"
+# Need to check that is PV has same logic as PA:20ID:STA_A_FES_OPEN_PL did
+#!  shutter_pv: "9ID:BLEPS:FES_CLOSED"
+#!  aps_current_pv: "S-DCCT:CurrentM"
+#!  undulator_energy_pv:  "S09ID:DSID:EnergyM"
  
 # White beam apertures (SL-1, SL-2)
 common_9id.devices.HHLApertureWBA:
@@ -151,11 +178,11 @@ common_9id.devices.JJtransfocator2xZ:
 
 #TetrAMM
 #ophyd.TetrAMM:
-#common_9id.devices.MyTetrAMM:
-#- name: tetramm1
-#  prefix: "9idTetra:QUAD1:"
-#  port_name: "QUAD1"
-#  labels: ["tetramm"]
+common_9id.devices.MyTetrAMM:
+- name: tetramm1
+  prefix: "9idTetra:QUAD1:"
+  port_name: "QUAD1"
+  labels: ["tetramm"]
 #- name: tetramm2
 #  prefix: "9idTetra:QUAD2:"
 #  port_name: "QUAD2"
@@ -322,6 +349,15 @@ ophyd.EpicsSignal:
 #           write_path_template: "/path/to/ioc/tmp/"
 #       - roi1
 #       - stats1
+
+# OMEGA MFC -- uses stream device for setting/reading
+#common_9id.devices.omegaMFCstream:
+#- name: mfc1
+#  prefix: "9idMFC:omega:1:"
+#  labels: ["mfc", "baseline"]
+#- name: mfc2
+#  prefix: "9idMFC:omega:2:"
+#  labels: ["mfc", "baseline"]
 
 # OMEGA MFC -- uses asyn record for direct communication
 # Not added to baseline as I don't know if it can take a reading properly

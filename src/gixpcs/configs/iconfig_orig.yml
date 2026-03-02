@@ -55,9 +55,7 @@ SPEC_DATA_FILES:
 
 ### APS Data Management
 ### Use bash shell, deactivate all conda environments, source this file:
-#original line is next, line+2 is corrected path
-#DM_SETUP_FILE: "/home/dm/etc/dm.setup.sh"
-DM_SETUP_FILE: "/home/dm_idd/etc/dm.setup.sh"
+DM_SETUP_FILE: "/home/dm/etc/dm.setup.sh"
 
 ### Local OPHYD Device Control Yaml
 DEVICES_FILES:

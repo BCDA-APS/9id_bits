@@ -17,3 +17,5 @@ from .fastShutter import fastShutter
 from .aerotech_hexapod import aerotechHexapod
 from .patched_aps import *
 # from .omega_mfc import omegaMFCasyn
+# from .omega_mfc import omegaMFCstream
+from .white_beam_ready_calc import WhiteBeamReadyCalc

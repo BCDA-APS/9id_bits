@@ -1,5 +1,7 @@
 """
-Omega Mass Flow controller over asyn record
+1. Omega Mass Flow controller as stream device
+
+2. Omega Mass Flow controller over asyn record
 
     Usage
     
@@ -13,6 +15,7 @@ Omega Mass Flow controller over asyn record
 
 import logging
 from ophyd import Device
+from ophyd import EpicsSignal, EpicsSignalRO
 from apstools.synApps.asyn import AsynRecord
 
 import time as ttime
@@ -23,6 +26,21 @@ import re
 
 logger = logging.getLogger(__name__)
 logger.info(__file__)
+
+class omegaMFCstream(Device):
+	'''
+	
+	'''
+
+    flow_setpoint = Cpt(EpicsSignal, "flowSP_RBV", write_pv = "flowSP", kind="hinted")
+
+    pressure = Cpt(EpicsSignalRO, "pressure_RBV", kind="hinted")
+    temperature = Cpt(EpicsSignalRO, "temp_RBV", kind="hinted")
+    vol_flow = Cpt(EpicsSignalRO, "volFlow_RBV", kind="hinted")
+    mass_flow = Cpt(EpicsSignalRO, "massFlow_RBV", kind="hinted")
+    gas = Cpt(EpicsSignalRO, "gas_RBV", string=True, kind="hinted")
+
+
 
 
 SET_COMMAND_STR = 'AS'

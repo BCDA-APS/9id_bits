@@ -124,6 +124,9 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             # Prep shutter
             self.fast_shutter_mode.put('1', wait=False)
             self.fast_shutter_actuate.put('0', wait=False)
+            # vv debug vv added by Miaoqi Chu, 11/14/2025
+            self._num_frames = self.cam.num_images.get()
+            # ^^ debug ^^ added by Miaoqi Chu, 11/14/2025
         
         self._hdf_on = self.hdf1.enable.get()
         if self._hdf_on == 'Enable':
@@ -289,6 +292,9 @@ class FancyTrigger(FastShutter, SoftglueTrigger, TriggerBase):
             else:                       # Pilatus
                 self.cam.acquire_period.put(on_time+0.01, wait = True)
                 self.sg_period.put(on_time+0.01, wait = False)          
+
+        ## MCHU debug
+        print(f"{period=}, {shutter_delay=}, {on_time=}")
 
 class FancyDetector(FancyTrigger, DetectorBase):
     """

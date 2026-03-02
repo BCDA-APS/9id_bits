@@ -17,6 +17,9 @@ ophyd.EpicsMotor:
 #           - {label: "Labjack 1", file: "LabJack_T7_SE", macros: "P=9idd:LJT8:1:" }
 #           - {label: "Labjack 2", file: "LabJack_T7_SE", macros: "P=9idd:LJT8:2:" }
 
+ophyd.EpicsSignal:
+- {name: "mux_2_sel_signal", read_pv: "9iddMZds:SG:MUX-2_SEL_Signal"}
+
 common_9id.devices.FlexCombinedEnc:
 - name: cssi_y2
   prefix: "9idCSSI:"
