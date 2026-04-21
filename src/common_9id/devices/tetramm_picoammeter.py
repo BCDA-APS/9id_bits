@@ -16,6 +16,11 @@ from ophyd.areadetector.plugins import StatsPlugin_V34
 from ophyd.device import Staged
 from ophyd.quadem import QuadEMPort
 
+
+# TODO: adapt for 9id
+# from id8_common.devices.area_detector import ID8_EpicsFileNameHDF5Plugin
+from apstools.devices import AD_EpicsFileNameHDF5Plugin
+
 logger = logging.getLogger(__name__)
 logger.info(__file__)
 
@@ -31,6 +36,14 @@ class MyTetrAMM(TetrAMM):
     current4 = Component(StatsPlugin_V34, "Current4:")
     image = Component(ImagePlugin_V34, "image1:")
     sum_all = Component(StatsPlugin_V34, "SumAll:")
+    # TODO update for 9ID
+    hdf1 = Component(
+#        ID8_EpicsFileNameHDF5Plugin,
+        AD_EpicsFileNameHDF5Plugin,
+        "HDF1:",
+        read_path_template = "//gdata/dm/9IDD/2025-2/",
+        write_path_template = "/gdata/dm/9IDD/2025-2/",
+    )
 
     def __init__(self, *args, port_name="TetrAMM", **kwargs):
         """custom port name"""
@@ -53,6 +66,8 @@ class MyTetrAMM(TetrAMM):
         self.current2.mean_value.kind = "hinted"
         self.current3.mean_value.kind = "hinted"
         self.current4.mean_value.kind = "hinted"
+
+        self.hdf1.kind = "normal"
 
     def trigger(self):
         """

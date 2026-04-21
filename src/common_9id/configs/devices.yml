@@ -210,6 +210,7 @@ ophyd.EpicsSignal:
 - {name: "scattering_orientation", read_pv: "9idd:StrReg13", labels: ["metadataPV"], string: "True"}
 - {name: "measurement_num", read_pv: "9idd:Reg1", labels: ["metadataPV"]}
 - {name: "qnw_index", read_pv: "9idd:Reg2", labels: ["metadataPV"]}
+
 #- {name: "sample0_pos", read_pv: "9idd:Reg3", labels: ["metadataPV"]}
 #- {name: "sample1_pos", read_pv: "9idd:Reg4", labels: ["metadataPV"]}
 #- {name: "sample2_pos", read_pv: "9idd:Reg5", labels: ["metadataPV"]}

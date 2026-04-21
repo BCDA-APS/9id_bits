@@ -5,10 +5,22 @@ apsbits.utils.sim_creator.predefined_device:
 - {creator: ophyd.sim.noisy_det, name: sim_det_cssi}
 
 ophyd.EpicsMotor:
-- {name: "uscope_x",      prefix: "9idCSSI:m5", labels: ["motor", "baseline"]}
-#- {name: "uscope_y",      prefix: "", labels: ["motors", "baseline"]}
-- {name: "uscope_z",      prefix: "9idCSSI:m6", labels: ["motor", "baseline"]}
-#- {name: "uscope_focus",  prefix: "", labels: ["motor", "baseline"]}
+- {name: "uscope_x",      prefix: "9idCSSI:CR9D1M2:m5", labels: ["motor", "baseline"]}
+- {name: "uscope_y",      prefix: "9idCSSI:CR9D1M2:m9", labels: ["motors", "baseline"]}
+- {name: "uscope_z",      prefix: "9idCSSI:CR9D1M2:m6", labels: ["motor", "baseline"]}
+- {name: "uscope_focus",  prefix: "9idCSSI:CR9D1M2:m10", labels: ["motor", "baseline"]}
+- {name: "cssi_flyz",      prefix: "9idANT95:aero:c0:m1", labels: ["motor", "baseline"]}
+- {name: "cssi_theta_x2",      prefix: "9idCSSI:mcs2-01:m1", labels: ["motor", "baseline"]}
+- {name: "cssi_Z4",      prefix: "9idCSSI:mcs2-01:m2", labels: ["motor", "baseline"]}
+- {name: "cssi_Y4",      prefix: "9idCSSI:mcs2-01:m3", labels: ["motor", "baseline"]}
+- {name: "cssi_X4",      prefix: "9idCSSI:mcs2-01:m4", labels: ["motor", "baseline"]}
+- {name: "kohzu_linear",   prefix: "9idCSSI:CR9D1M2:m1", labels: ["motor", "baseline"]}
+- {name: "kohzu_rotate",    prefix: "9idCSSI:CR9D1M2:m2", labels: ["motor", "baseline"]}
+- {name: "eiger_x",    prefix: "9idGT:m11", labels: ["motor", "baseline"]}
+- {name: "eiger_y",    prefix: "9idGT:m12", labels: ["motor", "baseline"]}
+- {name: "carriage_hor_bs_y",    prefix: "9idGT:m1", labels: ["motor", "baseline"]}
+- {name: "carriage_bs_bot",    prefix: "9idGT:mcs2-02:m3", labels: ["motor", "baseline"]}
+- {name: "gixs_sam_x", prefix: "9idd:CR9D4M1:m3", labels: ["motor", "baseline"]}
 
 #           - {label: "Smaract MCS2", file: "motor4x1.ui", macros: "P=9idd:mcs2-01:,M1=m1,M2=m2,M3=m3,M4=m4"}
 #           - {label: "Attocube AMC300", file: "motor2x1.ui", macros: "P=9idd:amc300-01:,M1=m1,M2=m2"}
@@ -17,8 +29,40 @@ ophyd.EpicsMotor:
 #           - {label: "Labjack 1", file: "LabJack_T7_SE", macros: "P=9idd:LJT8:1:" }
 #           - {label: "Labjack 2", file: "LabJack_T7_SE", macros: "P=9idd:LJT8:2:" }
 
+# Motions
+- {name: "aerorot_1",      prefix: "9idAerotech2:R1:m1", labels: ["motors", "baseline"]}
+
+
+common_9id.devices.aerotechHexapod:
+- name: hexapod1
+  prefix: "9idAerotech:HP1:"
+  labels: ["hexapod", "motors", "baseline"]
+  x: "m7"
+  y: "m8"
+  z: "m9"
+  ax: "m10"
+  ay: "m11"
+  az: "m12"
+- name: hexapod2
+  prefix: "9idAerotech2:HP2:"
+  labels: ["hexapod", "motors", "baseline"]
+  x: "m7"
+  y: "m8"
+  z: "m9"
+  ax: "m10"
+  ay: "m11"
+  az: "m12"
+
 ophyd.EpicsSignal:
 - {name: "mux_2_sel_signal", read_pv: "9iddMZds:SG:MUX-2_SEL_Signal"}
+- {name: "xpbm1_sum", read_pv: "9idT4U:BD3:BPM:SumAll:MeanValue_RBV", labels: ["metadataPV"]}
+- {name: "xpbm1_xpos", read_pv: "9idT4U:BD3:BPM:PosX:MeanValue_RBV", labels: ["metadataPV"]}
+- {name: "xpbm1_ypos", read_pv: "9idT4U:BD3:BPM:PosY:MeanValue_RBV", labels: ["metadataPV"]}
+- {name: "xpbm2_sum", read_pv: "9idT4U:BD5:BPM:SumAll:MeanValue_RBV", labels: ["metadataPV"]}
+- {name: "xpbm2_xpos", read_pv: "9idT4U:BD5:BPM:PosX:MeanValue_RBV", labels: ["metadataPV"]}
+- {name: "xpbm2_ypos", read_pv: "9idT4U:BD5:BPM:PosY:MeanValue_RBV", labels: ["metadataPV"]}
+
+# - {name: "measurement_num",  read_pv: "9idd:Reg1"}
 
 common_9id.devices.FlexCombinedEnc:
 - name: cssi_y2
