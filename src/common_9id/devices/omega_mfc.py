@@ -28,9 +28,9 @@ logger = logging.getLogger(__name__)
 logger.info(__file__)
 
 class omegaMFCstream(Device):
-	'''
-	
-	'''
+    '''
+    
+    '''
 
     flow_setpoint = Cpt(EpicsSignal, "flowSP_RBV", write_pv = "flowSP", kind="hinted")
 
